@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const remoteMain = require('@electron/remote/main');
 
@@ -95,3 +95,24 @@ app.on('activate', () => {
   }
 });
 
+// Add IPC handlers for window controls as a fallback mechanism
+ipcMain.on('close-window', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.close();
+});
+
+ipcMain.on('minimize-window', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.minimize();
+});
+
+ipcMain.on('maximize-window', (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) {
+    if (win.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win.maximize();
+    }
+  }
+});
