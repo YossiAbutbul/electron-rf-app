@@ -1,0 +1,93 @@
+<div class="page-container">
+  <h1>Configuration</h1>
+  
+  <div class="section">
+    <h2>Device Under Test</h2>
+    
+    <div class="form-group">
+      <label for="dut-type">Select DUT Type</label>
+      <div class="select-wrapper">
+        <select id="dut-type">
+          <option value="sonata2il">Sonata 2 IL</option>
+          <option value="sonata2us">Sonata 2 US</option>
+          <option value="sonataeu">Sonata EU</option>
+          <option value="catm2">CAT-M 2</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="connect-dut">Connect DUT</label>
+      <button id="connect-dut" class="search-button">Press to search BLE devices...</button>
+    </div>
+    
+    <div class="form-group">
+      <label>Select Test Protocols:</label>
+      <div class="checkbox-group">
+        <label class="checkbox">
+          <input type="checkbox" name="protocol" value="lora" checked>
+          <span>LoRa</span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="protocol" value="cellular" checked>
+          <span>Cellular</span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" name="protocol" value="ble" checked>
+          <span>BLE</span>
+        </label>
+      </div>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>Test</h2>
+    
+    <div class="form-group">
+      <label for="spectrum-analyzer">Spectrum Analyzer IP Address</label>
+      <div class="input-with-button">
+        <input type="text" id="spectrum-analyzer" value="192.168.2.3">
+        <button id="check-spectrum" class="check-button">Check</button>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label for="power-analyzer">Power Analyzer IP Address</label>
+      <div class="input-with-button">
+        <input type="text" id="power-analyzer" value="192.168.2.4">
+        <button id="check-power" class="check-button">Check</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h2>Save Report Directory</h2>
+    
+    <div class="form-group">
+      <label for="report-directory">Choose Directory to Save Report</label>
+      <div class="directory-selector">
+        <input type="text" id="report-directory" value="C:/Users/Documents">
+        <button id="browse-directory" class="browse-button">Browse</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BLE Devices Modal -->
+<div class="modal" id="ble-devices-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Select BLE Device</h2>
+      <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <ul class="device-list" id="ble-device-list">
+        <!-- Devices would be populated here -->
+      </ul>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-button">Cancel</button>
+      <button class="connect-button">Connect</button>
+    </div>
+  </div>
+</div>

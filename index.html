@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RF Test Application</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Add Boxicons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+  <!-- Custom Title Bar -->
+  <div class="title-bar">
+    <div class="title-bar-drag-area">
+      <div class="app-title">RF Test Application</div>
+    </div>
+    <div class="window-controls">
+      <button class="window-control minimize-button">−</button>
+      <button class="window-control maximize-button">□</button>
+      <button class="window-control close-button">×</button>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+      <div class="device-info">
+        <div class="device-icon">
+          <img src="assets/device-icon.png" alt="Device Icon">
+        </div>
+        <div class="device-details">
+          <div class="device-name">Sonata 2 IL</div>
+          <div class="device-id">00:1A:7D:DA:71:13</div>
+        </div>
+        <div class="device-status"></div>
+      </div>
+      
+      <nav class="nav-menu">
+        <ul>
+          <li class="nav-item active" data-page="configuration">
+            <i class='bx bx-cog nav-icon'></i>
+            <span class="nav-label">Configuration</span>
+          </li>
+          <li class="nav-item" data-page="lora">
+            <i class='bx bx-broadcast nav-icon'></i>
+            <span class="nav-label">LoRa</span>
+          </li>
+          <li class="nav-item" data-page="cellular">
+            <i class='bx bx-mobile nav-icon'></i>
+            <span class="nav-label">Cellular</span>
+          </li>
+          <li class="nav-item" data-page="ble">
+            <i class='bx bx-bluetooth nav-icon'></i>
+            <span class="nav-label">BLE</span>
+          </li>
+          <li class="nav-item" data-page="test-report">
+            <i class='bx bx-file nav-icon'></i>
+            <span class="nav-label">Test Report</span>
+          </li>
+          <li class="nav-item" data-page="settings">
+            <i class='bx bx-slider-alt nav-icon'></i>
+            <span class="nav-label">Settings</span>
+          </li>
+          
+        </ul>
+      </nav>
+    </div>
+    
+    <!-- Main Content Area - This will be populated dynamically -->
+    <div class="main-content" id="main-content">
+      <!-- Content will be loaded here -->
+    </div>
+  </div>
+  
+  <script src="renderer.js"></script>
+  <script src="titlebar.js"></script>
+</body>
+</html>
