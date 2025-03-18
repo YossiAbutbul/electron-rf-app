@@ -254,3 +254,4 @@ navItems.forEach(item => {
 document.addEventListener('DOMContentLoaded', () => {
   loadPage('configuration');
 });
+

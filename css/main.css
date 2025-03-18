@@ -10,6 +10,7 @@
 @import 'pages/ble.css';
 @import 'pages/test-report.css';
 @import 'pages/settings.css';
+@import 'tooltip.css';
 
 /* Reset and base styles */
 * {
@@ -39,6 +40,8 @@ body {
   padding: 25px;
   background-color: var(--color-bg-primary);
   overflow-y: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .page {
@@ -67,4 +70,35 @@ h2 {
   font-weight: 500;
   margin-bottom: 15px;
   color: var(--color-text-secondary);
+}
+
+/* Make main content responsive to sidebar collapse */
+.sidebar + .main-content {
+  transition: margin-left 0.3s ease;
+}
+
+/* More stylized scrollbar */
+.main-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.main-content::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+  border-radius: 5px;
+  margin: 2px 0;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background: var(--color-bg-scrollbar); /* Using your accent color */
+  border-radius: 5px;
+  border: 2px solid var(--color-bg-secondary); /* Create a border effect */
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: #2980b9; /* Darker version of accent color on hover */
+}
+
+/* Optional: style the scrollbar corner */
+.main-content::-webkit-scrollbar-corner {
+  background: var(--color-bg-secondary);
 }

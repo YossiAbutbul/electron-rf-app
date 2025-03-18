@@ -2,27 +2,23 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const remoteMain = require('@electron/remote/main');
 
-
 if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
   require('electron-reload')(__dirname, {
-    // Watch these file extensions
     electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
     hardResetMethod: 'exit'
   });
 }
-// Initialize remote module before creating any windows
+
+// Initialize remote module
 remoteMain.initialize();
 
-// Log the environment to help with debugging
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
-// Create a variable to store the window
 let mainWindow;
 
 function createWindow() {
   console.log('Creating window...');
   
-  // Create the browser window
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
@@ -34,27 +30,57 @@ function createWindow() {
     }
   });
 
-  // Enable remote module for this window's webContents
-  // This must be called before loading any content
   remoteMain.enable(mainWindow.webContents);
 
-  // Load the index.html file
+  // More comprehensive DevTools error filtering
+  mainWindow.webContents.on('devtools-opened', () => {
+    mainWindow.webContents.devToolsWebContents.executeJavaScript(`
+      // Override console.error to filter out known DevTools errors
+      const originalConsoleError = console.error;
+      console.error = function(...args) {
+        // Check if this is one of our known harmless errors
+        const errorText = args[0] && typeof args[0] === 'string' ? args[0] : '';
+        
+        // Filter different types of known DevTools errors
+        if (errorText.includes('Autofill.enable') || 
+            errorText.includes('Autofill.setAddresses') ||
+            errorText.includes('is not valid JSON') ||
+            errorText.includes('HTTP/1.1 4')) {
+          return;
+        }
+        
+        // Pass through all other errors
+        return originalConsoleError.apply(this, args);
+      };
+      
+      // Also catch unhandled promise rejections related to DevTools
+      window.addEventListener('unhandledrejection', function(event) {
+        if (event.reason && event.reason.message && 
+            (event.reason.message.includes('is not valid JSON') || 
+             event.reason.message.includes('HTTP/1.1 4'))) {
+          event.preventDefault(); // Prevent the error from being logged
+          return false;
+        }
+      });
+      
+      console.log('DevTools error filtering enabled');
+    `).catch(err => console.error('Failed to override DevTools console:', err));
+  });
+
   mainWindow.loadFile('index.html');
   
-  // Open DevTools in development mode
   if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
     console.log('Opening DevTools in development mode');
     mainWindow.webContents.openDevTools();
   }
 }
 
-// Create window when Electron is ready
 app.whenReady().then(() => {
   console.log('Electron ready, creating window...');
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
   createWindow();
 });
 
-// Quit when all windows are closed
 app.on('window-all-closed', () => {
   console.log('All windows closed');
   if (process.platform !== 'darwin') {
@@ -68,3 +94,4 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
