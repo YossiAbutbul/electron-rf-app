@@ -1,0 +1,56 @@
+/* Custom tooltips for nav items */
+.nav-item {
+  position: relative;
+}
+
+.tooltip {
+  visibility: hidden;
+  position: fixed;
+  opacity: 0;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: var(--color-bg-sidebar-darker);
+  color: var(--color-white);
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  pointer-events: none; /* Prevent the tooltip from blocking mouse events */
+  
+  /* Add a small arrow on the left side */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -6px;
+    transform: translateY(-50%);
+    border-width: 6px 6px 6px 0;
+    border-style: solid;
+    border-color: transparent var(--color-bg-sidebar-darker) transparent transparent;
+  }
+}
+
+.tooltip.active {
+  visibility: visible;
+  opacity: 1;
+}
+/* Show tooltip on hover */
+.nav-item:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* In normal sidebar mode, only show tooltips on collapsed sidebar */
+.sidebar:not(.collapsed) .tooltip {
+  display: none;
+}
+
+
+.nav-item:hover .tooltip {
+  transition-delay: 0.5s; /* Show after hovering for 0.5s */
+}

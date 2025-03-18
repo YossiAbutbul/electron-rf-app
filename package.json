@@ -24,6 +24,7 @@
     "electron-builder": "^25.1.8"
   },
   "devDependencies": {
+    "electron-devtools-installer": "^4.0.0",
     "electron-reload": "^2.0.0-alpha.1"
   }
 }

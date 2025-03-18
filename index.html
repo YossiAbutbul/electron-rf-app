@@ -40,26 +40,40 @@
           <li class="nav-item active" data-page="configuration">
             <i class='bx bx-cog nav-icon'></i>
             <span class="nav-label">Configuration</span>
+            <span class="tooltip">Configuration</span>
           </li>
+
           <li class="nav-item" data-page="lora">
             <i class='bx bx-broadcast nav-icon'></i>
             <span class="nav-label">LoRa</span>
+            <span class="tooltip">LoRa</span>
           </li>
+
           <li class="nav-item" data-page="cellular">
             <i class='bx bx-mobile nav-icon'></i>
             <span class="nav-label">Cellular</span>
+            <span class="tooltip">Cellular</span>
           </li>
+
           <li class="nav-item" data-page="ble">
             <i class='bx bx-bluetooth nav-icon'></i>
             <span class="nav-label">BLE</span>
+            <span class="tooltip">BLE</span>
           </li>
+
           <li class="nav-item" data-page="test-report">
             <i class='bx bx-file nav-icon'></i>
             <span class="nav-label">Test Report</span>
-          </li>
-          
+            <span class="tooltip">Test Report</span>
+          </li>          
         </ul>
+        
       </nav>
+      <div class="sidebar-toggle">
+        <button id="toggle-sidebar">
+          <i class='bx bx-chevron-left'></i>
+        </button>
+      </div>
     </div>
     
     <!-- Main Content Area - This will be populated dynamically -->
@@ -70,5 +84,8 @@
   
   <script src="renderer.js"></script>
   <script src="titlebar.js"></script>
+  <script src="sidebar.js"></script>
+  <script src="tooltip.js"></script>
+
 </body>
 </html>
