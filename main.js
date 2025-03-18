@@ -1,24 +1,48 @@
+/**
+ * RF Testing Application - Main Process
+ * 
+ * This file handles the Electron main process functionality including:
+ * - Window creation and management
+ * - IPC communication
+ * - DevTools configuration
+ */
+
+// Core dependencies
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const remoteMain = require('@electron/remote/main');
 
-if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
+// Initialize remote module
+remoteMain.initialize();
+
+// Application variables
+let mainWindow;
+const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+
+// Log environment for debugging
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
+/**
+ * Configure development environment
+ */
+if (isDev) {
+  // Set up hot reload for development
   require('electron-reload')(__dirname, {
     electron: path.join(__dirname, 'node_modules', '.bin', 'electron'),
     hardResetMethod: 'exit'
   });
 }
 
-// Initialize remote module
-remoteMain.initialize();
-
-console.log('NODE_ENV:', process.env.NODE_ENV);
-
-let mainWindow;
-
+/**
+ * Create and configure the main application window
+ */
 function createWindow() {
   console.log('Creating window...');
   
+  // Disable Autofill to prevent DevTools errors
+  app.commandLine.appendSwitch('disable-features', 'AutofillServiceImpl');
+  
+  // Create the browser window
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 768,
@@ -30,9 +54,29 @@ function createWindow() {
     }
   });
 
+  // Enable remote module for this window
   remoteMain.enable(mainWindow.webContents);
 
-  // More comprehensive DevTools error filtering
+  // Configure DevTools error filtering
+  configureDevTools();
+
+  // Load the main HTML file
+  mainWindow.loadFile('index.html');
+  
+  // Open DevTools in development mode
+  if (isDev) {
+    console.log('Opening DevTools in development mode');
+    mainWindow.webContents.openDevTools({
+      mode: 'detach',
+      activate: false
+    });
+  }
+}
+
+/**
+ * Configure DevTools to filter out known errors
+ */
+function configureDevTools() {
   mainWindow.webContents.on('devtools-opened', () => {
     mainWindow.webContents.devToolsWebContents.executeJavaScript(`
       // Override console.error to filter out known DevTools errors
@@ -66,21 +110,54 @@ function createWindow() {
       console.log('DevTools error filtering enabled');
     `).catch(err => console.error('Failed to override DevTools console:', err));
   });
-
-  mainWindow.loadFile('index.html');
-  
-  if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
-    console.log('Opening DevTools in development mode');
-    mainWindow.webContents.openDevTools();
-  }
 }
 
+/**
+ * Set up IPC handlers for window controls
+ */
+function setupIpcHandlers() {
+  // Window close handler
+  ipcMain.on('close-window', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) win.close();
+  });
+
+  // Window minimize handler
+  ipcMain.on('minimize-window', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) win.minimize();
+  });
+
+  // Window maximize/restore handler
+  ipcMain.on('maximize-window', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+      if (win.isMaximized()) {
+        win.unmaximize();
+      } else {
+        win.maximize();
+      }
+    }
+  });
+}
+
+/**
+ * Application event handlers
+ */
 app.whenReady().then(() => {
   console.log('Electron ready, creating window...');
+  
+  // Disable security warnings in development
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+  
+  // Setup IPC handlers
+  setupIpcHandlers();
+  
+  // Create the application window
   createWindow();
 });
 
+// Quit when all windows are closed (except on macOS)
 app.on('window-all-closed', () => {
   console.log('All windows closed');
   if (process.platform !== 'darwin') {
@@ -88,31 +165,10 @@ app.on('window-all-closed', () => {
   }
 });
 
+// Re-create window when app icon is clicked (macOS)
 app.on('activate', () => {
   console.log('App activated');
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
-  }
-});
-
-// Add IPC handlers for window controls as a fallback mechanism
-ipcMain.on('close-window', (event) => {
-  const win = BrowserWindow.fromWebContents(event.sender);
-  if (win) win.close();
-});
-
-ipcMain.on('minimize-window', (event) => {
-  const win = BrowserWindow.fromWebContents(event.sender);
-  if (win) win.minimize();
-});
-
-ipcMain.on('maximize-window', (event) => {
-  const win = BrowserWindow.fromWebContents(event.sender);
-  if (win) {
-    if (win.isMaximized()) {
-      win.unmaximize();
-    } else {
-      win.maximize();
-    }
   }
 });
