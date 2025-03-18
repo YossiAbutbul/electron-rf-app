@@ -1,0 +1,27 @@
+{
+  "name": "electron-rf-app",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YossiAbutbul/electron-rf-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/YossiAbutbul/electron-rf-app/issues"
+  },
+  "homepage": "https://github.com/YossiAbutbul/electron-rf-app#readme",
+  "description": "",
+  "dependencies": {
+    "electron": "^35.0.2",
+    "electron-builder": "^25.1.8"
+  },
+  "devDependencies": {
+    "electron-reload": "^2.0.0-alpha.1"
+  }
+}
