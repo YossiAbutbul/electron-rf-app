@@ -11,10 +11,6 @@ A desktop application for testing RF parameters via Bluetooth communication to e
 - Data collection and reporting
 - Modern, responsive UI with collapsible sidebar
 
-## Screenshot
-
-![RF Testing Application](path/to/screenshot.png)
-
 ## Installation
 
 ### Prerequisites
