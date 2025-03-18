@@ -1,0 +1,20 @@
+/* BLE page specific styles */
+.ble-device-card {
+  padding: 15px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.ble-services {
+  margin-top: 15px;
+}
+
+.ble-service {
+  padding: 10px;
+  background-color: var(--color-bg-secondary);
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+/* Add more BLE specific styles as needed */

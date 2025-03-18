@@ -1,0 +1,9 @@
+/* Configuration page specific styles */
+.config-panel {
+  background-color: var(--color-bg-secondary);
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+/* Any other configuration page specific styles would go here */

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron .",
+    "dev": "set NODE_ENV=development && electron ."
   },
   "repository": {
     "type": "git",
@@ -18,6 +19,7 @@
   "homepage": "https://github.com/YossiAbutbul/electron-rf-app#readme",
   "description": "",
   "dependencies": {
+    "@electron/remote": "^2.1.2",
     "electron": "^35.0.2",
     "electron-builder": "^25.1.8"
   },

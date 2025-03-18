@@ -1,0 +1,23 @@
+/* Cellular page specific styles */
+.cellular-signal-chart {
+  height: 200px;
+  margin: 20px 0;
+  background-color: var(--color-bg-secondary);
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.signal-meter {
+  display: flex;
+  align-items: flex-end;
+  height: 30px;
+  margin-bottom: 15px;
+}
+
+.signal-bar {
+  width: 6px;
+  background-color: var(--color-accent);
+  margin-right: 2px;
+}
+
+/* Add more cellular specific styles as needed */

@@ -1,0 +1,30 @@
+/* LoRa page specific styles */
+.lora-status {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.status-active {
+  background-color: var(--color-status-online);
+}
+
+.status-inactive {
+  background-color: #ccc;
+}
+
+.test-results {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: var(--color-bg-secondary);
+  border-radius: 4px;
+}
+
+/* Add more LoRa specific styles as needed */
