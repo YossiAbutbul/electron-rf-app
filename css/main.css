@@ -33,7 +33,7 @@ body {
   width: 100vw;
   overflow: hidden;
   background-color: var(--color-bg-sidebar);
-  min-width: 550px;
+  
 }
 
 /* Main content styles */
