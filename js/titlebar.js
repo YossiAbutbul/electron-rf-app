@@ -7,6 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const maximizeButton = document.querySelector('.maximize-button');
   const closeButton = document.querySelector('.close-button');
   
+  // Remove focus from minimize button
+  minimizeButton.blur();
+  
+  // Set tabindex to prevent auto-focus
+  minimizeButton.setAttribute('tabindex', '-1');
+  maximizeButton.setAttribute('tabindex', '-1');
+  closeButton.setAttribute('tabindex', '-1');
+  
   // Alternative close method that uses IPC if remote fails
   function closeWindow() {
     try {
