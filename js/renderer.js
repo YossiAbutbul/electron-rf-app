@@ -2,6 +2,7 @@
 const navItems = document.querySelectorAll('.nav-item');
 const mainContent = document.getElementById('main-content');
 
+
 // Current page tracking
 let currentPage = 'configuration';
 
@@ -254,4 +255,6 @@ navItems.forEach(item => {
 document.addEventListener('DOMContentLoaded', () => {
   loadPage('configuration');
 });
+
+//##############################
 

@@ -1,55 +1,181 @@
 <div class="page-container">
-  <h1>LoRa Testing</h1>
+  <h1>LoRa Test</h1>
   
-  <div class="section">
-    <h2>LoRa Parameters</h2>
-    
-    <div class="form-group">
-      <label for="lora-frequency">Frequency (MHz)</label>
-      <input type="text" id="lora-frequency" value="868">
-    </div>
-    
-    <div class="form-group">
-      <label for="lora-bandwidth">Bandwidth</label>
-      <div class="select-wrapper">
-        <select id="lora-bandwidth">
-          <option value="125">125 kHz</option>
-          <option value="250">250 kHz</option>
-          <option value="500">500 kHz</option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="form-group">
-      <label for="lora-spreading-factor">Spreading Factor</label>
-      <div class="select-wrapper">
-        <select id="lora-spreading-factor">
-          <option value="7">SF7</option>
-          <option value="8">SF8</option>
-          <option value="9">SF9</option>
-          <option value="10">SF10</option>
-          <option value="11">SF11</option>
-          <option value="12">SF12</option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="form-group">
-      <label for="lora-tx-power">TX Power (dBm)</label>
-      <input type="text" id="lora-tx-power" value="14">
-    </div>
+  <div class="test-controls">
+    <button class="primary-button" id="start-test">Start Test</button>
   </div>
   
-  <div class="section">
-    <h2>Test Sequence</h2>
-    
-    <div class="button-group">
-      <button class="primary-button">Start Test</button>
-      <button class="secondary-button">Stop Test</button>
+  <div class="test-matrices">
+    <div class="test-row">
+      <!-- TX Power Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>Tx Power</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>917MHz</th>
+                <th>918.5MHz</th>
+                <th>919.7MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>14 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>20 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>30 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TX Current Consumption Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>Tx Current Consumption</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>917MHz</th>
+                <th>918.5MHz</th>
+                <th>919.7MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>14 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>20 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>30 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    
-    <div class="results-container" style="margin-top: 20px;">
-      <p>Test results will appear here...</p>
+
+    <div class="test-row">
+      <!-- OBW Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>OBW</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>917MHz</th>
+                <th>918.5MHz</th>
+                <th>919.7MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DR 7</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>DR 12</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Frequency Accuracy Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>Frequency Accuracy</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>917MHz</th>
+                <th>918.5MHz</th>
+                <th>919.7MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>At start</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>After 60 sec.</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>
