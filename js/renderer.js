@@ -30,6 +30,7 @@ async function loadPage(pageName) {
   } catch (error) {
     console.error('Error loading page:', error);
     mainContent.innerHTML = `<div class="error-message">Error loading page: ${error.message}</div>`;
+    window.customModal.error(`Failed to load page: ${error.message}`, 'Page Loading Error');
   }
 }
 
@@ -113,9 +114,11 @@ function initPageFunctions(pageName) {
         document.querySelector('.device-id').textContent = deviceId;
         
         bleDevicesModal.classList.remove('active');
-        alert(`Connected to ${deviceName}`);
+        // Replace alert with custom modal
+        window.customModal.success(`Connected to ${deviceName}`, 'Connection Successful');
       } else {
-        alert('Please select a device');
+        // Replace alert with custom modal
+        window.customModal.warning('Please select a device', 'Selection Required');
       }
     });
   }
@@ -131,13 +134,15 @@ function initConfigurationPage() {
     checkSpectrumButton.addEventListener('click', () => {
       const address = document.getElementById('spectrum-analyzer').value;
       if (!address) {
-        alert('Please enter a valid IP address');
+        // Replace alert with custom modal
+        window.customModal.error('Please enter a valid IP address', 'Input Error');
         return;
       }
       
       // Simulate connection check
       setTimeout(() => {
-        alert('Connection successful!');
+        // Replace alert with custom modal
+        window.customModal.success('Connection successful!', 'Spectrum Analyzer');
       }, 500);
     });
   }
@@ -146,13 +151,15 @@ function initConfigurationPage() {
     checkPowerButton.addEventListener('click', () => {
       const address = document.getElementById('power-analyzer').value;
       if (!address) {
-        alert('Please enter a valid IP address');
+        // Replace alert with custom modal
+        window.customModal.error('Please enter a valid IP address', 'Input Error');
         return;
       }
       
       // Simulate connection check
       setTimeout(() => {
-        alert('Connection successful!');
+        // Replace alert with custom modal
+        window.customModal.success('Connection successful!', 'Power Analyzer');
       }, 500);
     });
   }
@@ -161,6 +168,8 @@ function initConfigurationPage() {
     browseDirectoryButton.addEventListener('click', () => {
       // For now, just set a sample directory
       document.getElementById('report-directory').value = 'C:/Users/Selected/Path';
+      // Add notification with custom modal
+      window.customModal.info('Directory path updated', 'File System');
     });
   }
 }
@@ -175,15 +184,27 @@ function initLoraPage() {
   
   if (startButton) {
     startButton.addEventListener('click', () => {
-      alert('LoRa test started');
-      document.querySelector('.results-container').innerHTML = 'Test in progress...';
+      // Replace alert with confirm modal
+      window.customModal.confirm('Are you sure you want to start the LoRa test?', 'Start Test')
+        .then(confirmed => {
+          if (confirmed) {
+            document.querySelector('.results-container').innerHTML = 'Test in progress...';
+            window.customModal.info('LoRa test started. Monitoring in progress...', 'LoRa Test');
+          }
+        });
     });
   }
   
   if (stopButton) {
     stopButton.addEventListener('click', () => {
-      alert('LoRa test stopped');
-      document.querySelector('.results-container').innerHTML = 'Test stopped by user.';
+      // Replace alert with warning modal
+      window.customModal.warning('Stopping the test will terminate data collection. Continue?', 'Stop Test')
+        .then(confirmed => {
+          if (confirmed) {
+            document.querySelector('.results-container').innerHTML = 'Test stopped by user.';
+            window.customModal.info('Test stopped by user', 'LoRa Test');
+          }
+        });
     });
   }
 }
@@ -239,10 +260,14 @@ navItems.forEach(item => {
     if (!pageName) return;
     
     if (pageName === 'logout') {
-      if (confirm('Are you sure you want to log out?')) {
-        // In a real app, this would handle actual logout
-        alert('Logged out successfully');
-      }
+      // Replace confirm with custom modal
+      window.customModal.confirm('Are you sure you want to log out?', 'Logout Confirmation')
+        .then(confirmed => {
+          if (confirmed) {
+            // In a real app, this would handle actual logout
+            window.customModal.success('Logged out successfully', 'Logout');
+          }
+        });
       return;
     }
     
@@ -254,7 +279,12 @@ navItems.forEach(item => {
 // Initialize the application by loading the default page
 document.addEventListener('DOMContentLoaded', () => {
   loadPage('configuration');
+  
+  // Clear focus from any button elements
+  setTimeout(() => {
+    // Remove focus from any window control button
+    document.querySelectorAll('.window-control').forEach(btn => {
+      btn.blur();
+    });
+  }, 100);
 });
-
-//##############################
-

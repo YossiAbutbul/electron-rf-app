@@ -45,7 +45,12 @@ function startLoRaTest() {
   });
   
   if (selectedTests.length === 0) {
-    alert('Please select at least one test to run.');
+    // Use custom modal instead of alert
+    if (window.customModal) {
+      window.customModal.warning('Please select at least one test to run.', 'Test Selection');
+    } else {
+      alert('Please select at least one test to run.');
+    }
     return;
   }
   
@@ -99,8 +104,11 @@ function simulateTestRun(selectedTests) {
   let delay = 500;
   
   selectedTests.forEach(testType => {
-    // Find the table for this test type
-    const testContainer = document.querySelector(`.matrix-header .checkbox span:contains('${testType}')`).closest('.test-matrix');
+    // Find the table for this test type using our helper function
+    const testHeader = findElementContainingText('.matrix-header .checkbox span', testType);
+    if (!testHeader) return;
+    
+    const testContainer = testHeader.closest('.test-matrix');
     if (!testContainer) return;
     
     const table = testContainer.querySelector('.matrix-table');
@@ -137,6 +145,11 @@ function simulateTestRun(selectedTests) {
             setTimeout(() => {
               document.getElementById('start-test').textContent = 'Start Test';
               document.getElementById('start-test').disabled = false;
+              
+              // Show test completion notification
+              if (window.customModal) {
+                window.customModal.success('Test completed successfully!', 'LoRa Test');
+              }
             }, 500);
           }
         }, delay);
@@ -161,15 +174,21 @@ function convertCellToInput(cell) {
   cell.appendChild(input);
 }
 
-// Helper function to make it easier to select by text content
-// Similar to jQuery's :contains selector
-if (!document.querySelector(':contains')) {
-  Element.prototype.contains = function(text) {
-    return this.textContent.includes(text);
-  };
-  
-  // Add a contains method to NodeList
-  NodeList.prototype.filter = function(predicate) {
-    return Array.from(this).filter(predicate);
-  };
+// Helper function to find an element containing specific text
+function findElementContainingText(selector, text) {
+  const elements = document.querySelectorAll(selector);
+  for (let i = 0; i < elements.length; i++) {
+    if (elements[i].textContent.includes(text)) {
+      return elements[i];
+    }
+  }
+  return null;
+}
+
+// Helper function to find all elements containing specific text
+function findElementsContainingText(selector, text) {
+  const elements = document.querySelectorAll(selector);
+  return Array.from(elements).filter(element => 
+    element.textContent.includes(text)
+  );
 }
