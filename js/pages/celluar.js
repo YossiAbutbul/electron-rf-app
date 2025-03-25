@@ -10,6 +10,9 @@ function initCellularPage() {
   
   // Update existing band headers to add edit/delete buttons
   updateExistingBandHeaders();
+  
+  // Setup event delegation for dynamically created elements
+  setupEventDelegation();
 }
 
 // Initialize all table cells with input fields
@@ -44,7 +47,10 @@ function setupEventListeners() {
   // Start test button
   const startTestButton = document.getElementById('start-test');
   if (startTestButton) {
-    startTestButton.addEventListener('click', startCellularTest);
+    startTestButton.addEventListener('click', function() {
+      // Placeholder for test functionality
+      console.log('Test button clicked - functionality removed for simplicity');
+    });
   }
 
   // Add band button
@@ -82,9 +88,54 @@ function setupEventListeners() {
   if (saveBandButton) {
     saveBandButton.addEventListener('click', saveBand);
   }
+}
 
-  // Setup event delegation for dynamically created elements
-  setupEventDelegation();
+// Setup event delegation for dynamically created elements
+function setupEventDelegation() {
+  // Handle clicks using event delegation
+  document.addEventListener('click', function(e) {
+    // Handle remove frequency or power input button clicks
+    if (e.target.closest('.remove-input')) {
+      const inputRow = e.target.closest('.input-row');
+      if (!inputRow) return; // Exit if no input row found
+      
+      const container = inputRow.parentElement;
+      if (!container) return; // Exit if no container found
+      
+      // Only remove if there's more than one input
+      const inputRows = container.querySelectorAll('.input-row');
+      if (!inputRows || inputRows.length <= 1) {
+        if (window.customModal) {
+          window.customModal.warning('At least one input is required', 'Validation');
+        } else {
+          alert('At least one input is required');
+        }
+        return;
+      }
+      
+      // Remove the row
+      inputRow.remove();
+    }
+    
+    // Handle edit band button clicks using event delegation
+    if (e.target.closest('.edit-band')) {
+      const editButton = e.target.closest('.edit-band');
+      const bandSection = editButton.closest('.band-section');
+      if (bandSection) {
+        openEditBandModal(bandSection);
+      }
+    }
+    
+    // Handle delete band button clicks using event delegation
+    if (e.target.closest('.delete-band')) {
+      const deleteButton = e.target.closest('.delete-band');
+      const bandSection = deleteButton.closest('.band-section');
+      if (bandSection) {
+        const bandName = bandSection.querySelector('.band-header h2').textContent.trim();
+        confirmDeleteBand(bandSection, bandName);
+      }
+    }
+  });
 }
 
 // Update existing band headers to include edit and delete buttons
@@ -95,29 +146,7 @@ function updateExistingBandHeaders() {
   existingBandHeaders.forEach(header => {
     // Check if the header already has the title container structure
     if (header.querySelector('.band-title-container')) {
-      // Already has the right structure, but ensure event listeners are attached
-      const bandSection = header.closest('.band-section');
-      const bandName = header.querySelector('h2').textContent.trim();
-      const renameButton = header.querySelector('.rename-band');
-      const deleteButton = header.querySelector('.delete-band');
-      
-      // Re-attach event listeners to be safe
-      const editButton = header.querySelector('.edit-band');
-      if (editButton) {
-        // Remove existing listeners to avoid duplicates
-        const newEditButton = editButton.cloneNode(true);
-        editButton.parentNode.replaceChild(newEditButton, editButton);
-        newEditButton.addEventListener('click', () => openEditBandModal(bandSection));
-      }
-      
-      if (deleteButton) {
-        // Remove existing listeners to avoid duplicates
-        const newDeleteButton = deleteButton.cloneNode(true);
-        deleteButton.parentNode.replaceChild(newDeleteButton, deleteButton);
-        newDeleteButton.addEventListener('click', () => confirmDeleteBand(bandSection, bandName));
-      }
-      
-      return; // Skip to the next header
+      return; // Skip to the next header - already has the right structure
     }
     
     // Get the band name
@@ -147,48 +176,19 @@ function updateExistingBandHeaders() {
     
     titleContainer.appendChild(actions);
     header.appendChild(titleContainer);
-    
-    // Add event listeners
-    const editButton = actions.querySelector('.edit-band');
-    const deleteButton = actions.querySelector('.delete-band');
-    
-    editButton.addEventListener('click', () => openEditBandModal(bandSection));
-    deleteButton.addEventListener('click', () => confirmDeleteBand(bandSection, bandName));
-  });
-}
-
-// Setup event delegation for dynamically created elements
-function setupEventDelegation() {
-  // Handle remove buttons for frequency and power inputs
-  document.addEventListener('click', function(e) {
-    // Handle remove frequency or power input button clicks
-    if (e.target.closest('.remove-input')) {
-      const inputRow = e.target.closest('.input-row');
-      if (!inputRow) return; // Exit if no input row found
-      
-      const container = inputRow.parentElement;
-      if (!container) return; // Exit if no container found
-      
-      // Only remove if there's more than one input
-      const inputRows = container.querySelectorAll('.input-row');
-      if (!inputRows || inputRows.length <= 1) {
-        if (window.customModal) {
-          window.customModal.warning('At least one input is required', 'Validation');
-        } else {
-          alert('At least one input is required');
-        }
-        return;
-      }
-      
-      // Remove the row
-      inputRow.remove();
-    }
   });
 }
 
 // Open the Add Band Modal
 function openAddBandModal() {
   const modal = document.getElementById('band-modal');
+  
+  // Reset the form to ensure it's clean
+  resetBandModal();
+  
+  // Update modal title to indicate adding
+  modal.querySelector('.modal-header h2').textContent = 'Add New Band';
+  
   modal.classList.add('active');
 }
 
@@ -233,7 +233,9 @@ function resetBandModal() {
   
   // Clear edit band id if present
   const saveButton = document.getElementById('save-band-button');
-  saveButton.removeAttribute('data-edit-band-id');
+  if (saveButton) {
+    saveButton.removeAttribute('data-edit-band-id');
+  }
 }
 
 // Add a frequency input field
@@ -271,39 +273,62 @@ function openEditBandModal(bandSection) {
   // Get current band data
   const bandName = bandSection.querySelector('.band-header h2').textContent.trim();
   
-  // Extract frequencies from the first table header
-  const frequencyHeaders = bandSection.querySelectorAll('.matrix-table thead th:not(:first-child)');
+  // Extract frequencies from ONLY the first table - this prevents duplicates
+  const firstTable = bandSection.querySelector('.matrix-table');
   const frequencies = [];
-  frequencyHeaders.forEach(header => {
-    let freq = header.textContent.trim();
-    // Remove 'MHz' if present
-    freq = freq.replace('MHz', '');
-    frequencies.push(freq);
-  });
   
-  // Get power levels from the first table (Tx Power) if it exists
-  const txPowerTable = bandSection.querySelector('.matrix-table');
+  if (firstTable) {
+    const frequencyHeaders = firstTable.querySelectorAll('thead th:not(:first-child)');
+    frequencyHeaders.forEach(header => {
+      let freq = header.textContent.trim();
+      // Remove 'MHz' if present
+      freq = freq.replace('MHz', '');
+      // Only add if not already in the array
+      if (!frequencies.includes(freq)) {
+        frequencies.push(freq);
+      }
+    });
+  }
+  
+  // Get power levels from the first table if it exists
   const powerLevels = [];
-  if (txPowerTable) {
-    const powerRows = txPowerTable.querySelectorAll('tbody tr');
+  if (firstTable) {
+    const powerRows = firstTable.querySelectorAll('tbody tr');
     powerRows.forEach(row => {
       let power = row.querySelector('td:first-child').textContent.trim();
       // Remove 'dBm' if present
       power = power.replace('dBm', '').trim();
       // Only add if it has a number (to filter out rows like "Measured" or "Diff.")
-      if (!isNaN(parseFloat(power))) {
+      if (!isNaN(parseFloat(power)) && !powerLevels.includes(power)) {
         powerLevels.push(power);
       }
     });
   }
   
-  // Get selected tests
+  // Get selected tests - using standard DOM methods
+  const matrixHeaders = bandSection.querySelectorAll('.matrix-header');
   const selectedTests = {
-    txPower: bandSection.querySelector('.matrix-header:has(span:contains("Tx Power"))') !== null,
-    txCurrent: bandSection.querySelector('.matrix-header:has(span:contains("Tx Current"))') !== null,
-    obw: bandSection.querySelector('.matrix-header:has(span:contains("OBW"))') !== null,
-    freqAccuracy: bandSection.querySelector('.matrix-header:has(span:contains("Frequency Accuracy"))') !== null
+    txPower: false,
+    txCurrent: false,
+    obw: false,
+    freqAccuracy: false
   };
+  
+  matrixHeaders.forEach(header => {
+    const spanElement = header.querySelector('span');
+    if (spanElement) {
+      const testText = spanElement.textContent.trim();
+      if (testText.includes('Tx Power')) {
+        selectedTests.txPower = true;
+      } else if (testText.includes('Tx Current')) {
+        selectedTests.txCurrent = true;
+      } else if (testText.includes('OBW')) {
+        selectedTests.obw = true;
+      } else if (testText.includes('Frequency Accuracy')) {
+        selectedTests.freqAccuracy = true;
+      }
+    }
+  });
   
   // Populate the edit modal with the current values
   populateEditBandModal(bandName, frequencies, powerLevels, selectedTests);
@@ -327,40 +352,73 @@ function populateEditBandModal(bandName, frequencies, powerLevels, selectedTests
   // Set band name
   document.getElementById('band-name').value = bandName;
   
-  // Clear existing frequency inputs except the first one
+  // COMPLETELY clear existing frequency inputs (remove all inputs first)
   const frequencyContainer = document.getElementById('frequency-inputs');
-  while (frequencyContainer.children.length > 1) {
-    frequencyContainer.removeChild(frequencyContainer.lastChild);
-  }
+  frequencyContainer.innerHTML = '';
   
-  // Set first frequency and add the rest
+  // Add new frequency inputs for each frequency
   if (frequencies.length > 0) {
-    frequencyContainer.querySelector('.frequency-input').value = frequencies[0];
+    frequencies.forEach(freq => {
+      // Create a new input row
+      const inputRow = document.createElement('div');
+      inputRow.className = 'input-row';
+      
+      inputRow.innerHTML = `
+        <input type="text" class="frequency-input" placeholder="e.g. 700" value="${freq}">
+        <button class="remove-input"><i class='bx bx-trash'></i></button>
+      `;
+      
+      frequencyContainer.appendChild(inputRow);
+    });
+  } else {
+    // Add at least one empty frequency input if none exist
+    const inputRow = document.createElement('div');
+    inputRow.className = 'input-row';
     
-    // Add the rest of the frequencies
-    for (let i = 1; i < frequencies.length; i++) {
-      addFrequencyInput();
-      frequencyContainer.lastChild.querySelector('.frequency-input').value = frequencies[i];
-    }
+    inputRow.innerHTML = `
+      <input type="text" class="frequency-input" placeholder="e.g. 700">
+      <button class="remove-input"><i class='bx bx-trash'></i></button>
+    `;
+    
+    frequencyContainer.appendChild(inputRow);
   }
   
-  // Clear existing power inputs except the first one
+  // COMPLETELY clear existing power inputs (remove all inputs first)
   const powerContainer = document.getElementById('power-inputs');
-  while (powerContainer.children.length > 1) {
-    powerContainer.removeChild(powerContainer.lastChild);
-  }
+  powerContainer.innerHTML = '';
   
-  // Set first power level and add the rest
+  // Add new power level inputs for each power level
   if (powerLevels.length > 0) {
-    powerContainer.querySelector('.power-input').value = powerLevels[0];
+    powerLevels.forEach(power => {
+      // Create a new input row
+      const inputRow = document.createElement('div');
+      inputRow.className = 'input-row';
+      
+      inputRow.innerHTML = `
+        <input type="text" class="power-input" placeholder="e.g. 10" value="${power}">
+        <button class="remove-input"><i class='bx bx-trash'></i></button>
+      `;
+      
+      powerContainer.appendChild(inputRow);
+    });
+  } else {
+    // Add at least one empty power input if none exist
+    const inputRow = document.createElement('div');
+    inputRow.className = 'input-row';
     
-    // Add the rest of the power levels
-    for (let i = 1; i < powerLevels.length; i++) {
-      addPowerLevelInput();
-      powerContainer.lastChild.querySelector('.power-input').value = powerLevels[i];
-    }
+    inputRow.innerHTML = `
+      <input type="text" class="power-input" placeholder="e.g. 10">
+      <button class="remove-input"><i class='bx bx-trash'></i></button>
+    `;
+    
+    powerContainer.appendChild(inputRow);
   }
   
+  // Set checkboxes for selected tests
+  document.querySelector('input[name="test-txpower"]').checked = selectedTests.txPower;
+  document.querySelector('input[name="test-txcurrent"]').checked = selectedTests.txCurrent;
+  document.querySelector('input[name="test-obw"]').checked = selectedTests.obw;
+  document.querySelector('input[name="test-freqaccuracy"]').checked = selectedTests.freqAccuracy;
   // Set checkboxes for selected tests
   document.querySelector('input[name="test-txpower"]').checked = selectedTests.txPower;
   document.querySelector('input[name="test-txcurrent"]').checked = selectedTests.txCurrent;
@@ -402,16 +460,29 @@ function deleteBand(bandSection) {
   setTimeout(() => {
     bandSection.remove();
     
-    // Show confirmation if no bands left
+    // Show confirmation if no bands left - use safer method call
     const remainingBands = document.querySelectorAll('.band-section');
     if (remainingBands.length === 0 && window.customModal) {
-      window.customModal.info('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
+      // Check which method is available and use it
+      if (typeof window.customModal.info === 'function') {
+        window.customModal.info('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
+      } else if (typeof window.customModal.success === 'function') {
+        window.customModal.success('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
+      } else if (typeof window.customModal.alert === 'function') {
+        window.customModal.alert('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
+      }
+      // If none of the above methods exist, just don't show any notification
     }
   }, 500);
   
   // Show confirmation
   if (window.customModal) {
-    window.customModal.success('Band deleted successfully', 'Band Management');
+    if (typeof window.customModal.success === 'function') {
+      window.customModal.success('Band deleted successfully', 'Band Management');
+    } else if (typeof window.customModal.alert === 'function') {
+      window.customModal.alert('Band deleted successfully', 'Band Management');
+    }
+    // If neither method exists, don't show any notification
   }
 }
 
@@ -543,7 +614,7 @@ function createBandSection(bandName, frequencies, powerLevels, selectedTests) {
     <div class="band-title-container">
       <h2>${bandName}</h2>
       <div class="band-actions">
-        <button class="icon-button rename-band" title="Rename Band">
+        <button class="icon-button edit-band" title="Edit Band">
           <i class='bx bx-edit'></i>
         </button>
         <button class="icon-button delete-band" title="Delete Band">
@@ -603,13 +674,6 @@ function createBandSection(bandName, frequencies, powerLevels, selectedTests) {
   
   // Initialize the inputs in the new tables
   initializeNewTableCells(bandSection);
-  
-  // Attach event listeners to the new buttons
-  const editButton = bandHeader.querySelector('.edit-band');
-  const deleteButton = bandHeader.querySelector('.delete-band');
-  
-  editButton.addEventListener('click', () => openEditBandModal(bandSection));
-  deleteButton.addEventListener('click', () => confirmDeleteBand(bandSection, bandName));
 }
 
 // Create a test matrix
@@ -704,198 +768,6 @@ function initializeNewTableCells(container) {
       }
     });
   });
-}
-
-// Start the cellular test
-function startCellularTest() {
-  // Get selected test types from all band sections
-  const selectedTests = [];
-  
-  document.querySelectorAll('.band-section').forEach(bandSection => {
-    const bandName = bandSection.querySelector('.band-header h2').textContent.trim();
-    
-    bandSection.querySelectorAll('.matrix-header input[type="checkbox"]:checked').forEach(checkbox => {
-      const testName = checkbox.nextElementSibling.textContent.trim();
-      selectedTests.push({
-        band: bandName,
-        test: testName
-      });
-    });
-  });
-  
-  if (selectedTests.length === 0) {
-    // Use custom modal if available
-    if (window.customModal) {
-      window.customModal.warning('Please select at least one test to run.', 'Test Selection');
-    } else {
-      alert('Please select at least one test to run.');
-    }
-    return;
-  }
-  
-  console.log('Starting Cellular Test with selected tests:', selectedTests);
-  
-  // Clear previous results
-  clearTestResults();
-  
-  // Show loading state
-  const startButton = document.getElementById('start-test');
-  startButton.textContent = 'Running Test...';
-  startButton.disabled = true;
-  
-  // Simulate test running
-  simulateTestRun(selectedTests);
-}
-
-// Clear all test results
-function clearTestResults() {
-  document.querySelectorAll('.cell-input').forEach(input => {
-    input.value = '';
-    input.classList.remove('updated');
-  });
-}
-
-// Simulate a test run with sample data
-function simulateTestRun(selectedTests) {
-  // Sample data maps for different test types
-  const sampleData = {
-    'Tx Power': {
-      '0 dBm': '-30.2 dBm',
-      '14 dBm': '-16.3 dBm',
-      '20 dBm': '-10.2 dBm',
-      '30 dBm': '-0.5 dBm'
-    },
-    'Tx Current Consumption': {
-      '0 dBm': '22 mA',
-      '14 dBm': '35 mA',
-      '20 dBm': '48 mA',
-      '30 dBm': '65 mA'
-    },
-    'OBW': {
-      'DR 7': '125 kHz',
-      'DR 12': '500 kHz'
-    },
-    'Frequency Accuracy': {
-      'Measured': '±0.1 ppm',
-      'Diff.': '±0.2 ppm'
-    }
-  };
-  
-  // Delay for staggered updates
-  let delay = 500;
-  let cellCount = 0;
-  let totalCells = 0;
-  
-  // Count total cells to update for progress tracking
-  selectedTests.forEach(test => {
-    const bandSection = findBandSection(test.band);
-    if (!bandSection) return;
-    
-    const testMatrix = findTestMatrix(bandSection, test.test);
-    if (!testMatrix) return;
-    
-    const cells = testMatrix.querySelectorAll('td:not(:first-child) .cell-input');
-    totalCells += cells.length;
-  });
-  
-  // Process each selected test
-  selectedTests.forEach(test => {
-    const bandSection = findBandSection(test.band);
-    if (!bandSection) return;
-    
-    const testMatrix = findTestMatrix(bandSection, test.test);
-    if (!testMatrix) return;
-    
-    // Get the matrix table
-    const table = testMatrix.querySelector('.matrix-table');
-    if (!table) return;
-    
-    // Process each row
-    const rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-      // Get row label (e.g. "0 dBm", "DR 7")
-      const rowLabel = row.querySelector('td:first-child').textContent.trim();
-      
-      // Get the baseline value from sample data
-      const baseValue = sampleData[test.test]?.[rowLabel];
-      if (!baseValue) return;
-      
-      // For each cell in this row
-      const cells = row.querySelectorAll('td:not(:first-child) .cell-input');
-      cells.forEach(input => {
-        setTimeout(() => {
-          // Randomize the value slightly to simulate real measurements
-          if (baseValue.includes('dBm')) {
-            const value = parseFloat(baseValue) + (Math.random() * 0.4 - 0.2);
-            input.value = value.toFixed(1) + ' dBm';
-          } else if (baseValue.includes('mA')) {
-            const value = parseFloat(baseValue) + (Math.random() * 2 - 1);
-            input.value = Math.round(value) + ' mA';
-          } else if (baseValue.includes('kHz')) {
-            const value = parseFloat(baseValue) + (Math.random() * 10 - 5);
-            input.value = Math.round(value) + ' kHz';
-          } else if (baseValue.includes('ppm')) {
-            input.value = baseValue;
-          } else {
-            input.value = baseValue;
-          }
-          
-          // Highlight the updated cell
-          input.classList.add('updated');
-          
-          // Remove the highlight after animation
-          setTimeout(() => {
-            input.classList.remove('updated');
-          }, 1000);
-          
-          // Update progress
-          cellCount++;
-          
-          // Check if all cells are updated
-          if (cellCount >= totalCells) {
-            setTimeout(() => {
-              // Reset the start button
-              const startButton = document.getElementById('start-test');
-              startButton.textContent = 'Start Test';
-              startButton.disabled = false;
-              
-              // Show completion notification
-              if (window.customModal) {
-                window.customModal.success('Test completed successfully!', 'Cellular Test');
-              }
-            }, 500);
-          }
-        }, delay);
-        
-        // Increment delay for next cell
-        delay += 100;
-      });
-    });
-  });
-}
-
-// Helper function to find a band section by name
-function findBandSection(bandName) {
-  const sections = document.querySelectorAll('.band-section');
-  for (const section of sections) {
-    const header = section.querySelector('.band-header h2');
-    if (header && header.textContent.trim() === bandName) {
-      return section;
-    }
-  }
-  return null;
-}
-
-// Helper function to find a test matrix by test name within a band section
-function findTestMatrix(bandSection, testName) {
-  const matrixHeaders = bandSection.querySelectorAll('.matrix-header');
-  for (const header of matrixHeaders) {
-    const label = header.querySelector('span');
-    if (label && label.textContent.trim() === testName) {
-      return header.closest('.test-matrix');
-    }
-  }
-  return null;
 }
 
 // Make the initialization function available globally for renderer.js
