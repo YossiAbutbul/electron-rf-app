@@ -13,7 +13,6 @@ function initCellularPage() {
   
   // Setup event delegation for dynamically created elements
   setupEventDelegation();
-}
 
 // Initialize all table cells with input fields
 function initializeTableCells() {
@@ -28,17 +27,21 @@ function initializeTableCells() {
 }
 
 // Set up all event listeners
-function setupEventListeners() {
-  // Test matrix checkbox functionality
-  const testCheckboxes = document.querySelectorAll('.matrix-header input[type="checkbox"]');
+const testCheckboxes = document.querySelectorAll('.matrix-header input[type="checkbox"]');
   testCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function() {
       const testMatrix = this.closest('.test-matrix');
       if (testMatrix) {
+        // Find the table container
+        const tableContainer = testMatrix.querySelector('.table-container');
+        if (!tableContainer) return;
+        
         if (this.checked) {
-          testMatrix.classList.remove('disabled');
+          // When re-checked, make sure to remove the disabled class from the table container
+          tableContainer.classList.remove('disabled');
         } else {
-          testMatrix.classList.add('disabled');
+          // When unchecked, add the disabled class to the table container only
+          tableContainer.classList.add('disabled');
         }
       }
     });
@@ -743,7 +746,6 @@ function createTestMatrix(testName, frequencies, rowLabels, showPowerUnits) {
   return matrix;
 }
 
-// Initialize input fields for newly created tables
 function initializeNewTableCells(container) {
   const tableCells = container.querySelectorAll('.matrix-table td:not(:first-child)');
   tableCells.forEach(cell => {
@@ -754,16 +756,22 @@ function initializeNewTableCells(container) {
     cell.appendChild(input);
   });
   
-  // Add event listener for newly created checkboxes
+  // Add event listener for newly created checkboxes - UPDATED
   const checkboxes = container.querySelectorAll('.matrix-header input[type="checkbox"]');
   checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function() {
       const testMatrix = this.closest('.test-matrix');
       if (testMatrix) {
+        // Find the table container
+        const tableContainer = testMatrix.querySelector('.table-container');
+        if (!tableContainer) return;
+        
         if (this.checked) {
-          testMatrix.classList.remove('disabled');
+          // When re-checked, make sure to remove the disabled class from the table container
+          tableContainer.classList.remove('disabled');
         } else {
-          testMatrix.classList.add('disabled');
+          // When unchecked, add the disabled class to the table container only
+          tableContainer.classList.add('disabled');
         }
       }
     });
