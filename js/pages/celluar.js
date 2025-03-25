@@ -7,6 +7,9 @@ function initCellularPage() {
   
   // Setup event listeners
   setupEventListeners();
+  
+  // Update existing band headers to add edit/delete buttons
+  updateExistingBandHeaders();
 }
 
 // Initialize all table cells with input fields
@@ -84,6 +87,76 @@ function setupEventListeners() {
   setupEventDelegation();
 }
 
+// Update existing band headers to include edit and delete buttons
+function updateExistingBandHeaders() {
+  // This function can be called during page initialization
+  const existingBandHeaders = document.querySelectorAll('.band-header');
+  
+  existingBandHeaders.forEach(header => {
+    // Check if the header already has the title container structure
+    if (header.querySelector('.band-title-container')) {
+      // Already has the right structure, but ensure event listeners are attached
+      const bandSection = header.closest('.band-section');
+      const bandName = header.querySelector('h2').textContent.trim();
+      const renameButton = header.querySelector('.rename-band');
+      const deleteButton = header.querySelector('.delete-band');
+      
+      // Re-attach event listeners to be safe
+      const editButton = header.querySelector('.edit-band');
+      if (editButton) {
+        // Remove existing listeners to avoid duplicates
+        const newEditButton = editButton.cloneNode(true);
+        editButton.parentNode.replaceChild(newEditButton, editButton);
+        newEditButton.addEventListener('click', () => openEditBandModal(bandSection));
+      }
+      
+      if (deleteButton) {
+        // Remove existing listeners to avoid duplicates
+        const newDeleteButton = deleteButton.cloneNode(true);
+        deleteButton.parentNode.replaceChild(newDeleteButton, deleteButton);
+        newDeleteButton.addEventListener('click', () => confirmDeleteBand(bandSection, bandName));
+      }
+      
+      return; // Skip to the next header
+    }
+    
+    // Get the band name
+    const bandName = header.querySelector('h2').textContent.trim();
+    const bandSection = header.closest('.band-section');
+    
+    // Create the new structure
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'band-title-container';
+    
+    // Move the h2 inside the container
+    const h2 = header.querySelector('h2');
+    header.removeChild(h2);
+    titleContainer.appendChild(h2);
+    
+    // Add action buttons
+    const actions = document.createElement('div');
+    actions.className = 'band-actions';
+    actions.innerHTML = `
+      <button class="icon-button edit-band" title="Edit Band">
+        <i class='bx bx-edit'></i>
+      </button>
+      <button class="icon-button delete-band" title="Delete Band">
+        <i class='bx bx-trash'></i>
+      </button>
+    `;
+    
+    titleContainer.appendChild(actions);
+    header.appendChild(titleContainer);
+    
+    // Add event listeners
+    const editButton = actions.querySelector('.edit-band');
+    const deleteButton = actions.querySelector('.delete-band');
+    
+    editButton.addEventListener('click', () => openEditBandModal(bandSection));
+    deleteButton.addEventListener('click', () => confirmDeleteBand(bandSection, bandName));
+  });
+}
+
 // Setup event delegation for dynamically created elements
 function setupEventDelegation() {
   // Handle remove buttons for frequency and power inputs
@@ -124,7 +197,43 @@ function closeAddBandModal() {
   const modal = document.getElementById('band-modal');
   if (modal) { // Check if modal exists before trying to remove class
     modal.classList.remove('active');
+    
+    // Reset form for next use
+    resetBandModal();
   }
+}
+
+// Reset the band modal form to default state
+function resetBandModal() {
+  // Reset band name
+  document.getElementById('band-name').value = '';
+  
+  // Reset frequencies
+  const frequencyContainer = document.getElementById('frequency-inputs');
+  while (frequencyContainer.children.length > 1) {
+    frequencyContainer.removeChild(frequencyContainer.lastChild);
+  }
+  frequencyContainer.querySelector('.frequency-input').value = '';
+  
+  // Reset power levels
+  const powerContainer = document.getElementById('power-inputs');
+  while (powerContainer.children.length > 1) {
+    powerContainer.removeChild(powerContainer.lastChild);
+  }
+  powerContainer.querySelector('.power-input').value = '';
+  
+  // Reset checkboxes
+  document.querySelector('input[name="test-txpower"]').checked = true;
+  document.querySelector('input[name="test-txcurrent"]').checked = true;
+  document.querySelector('input[name="test-obw"]').checked = true;
+  document.querySelector('input[name="test-freqaccuracy"]').checked = true;
+  
+  // Reset modal title
+  document.querySelector('#band-modal .modal-header h2').textContent = 'Add New Band';
+  
+  // Clear edit band id if present
+  const saveButton = document.getElementById('save-band-button');
+  saveButton.removeAttribute('data-edit-band-id');
 }
 
 // Add a frequency input field
@@ -155,6 +264,155 @@ function addPowerLevelInput() {
   `;
   
   container.appendChild(inputRow);
+}
+
+// Open the edit band modal
+function openEditBandModal(bandSection) {
+  // Get current band data
+  const bandName = bandSection.querySelector('.band-header h2').textContent.trim();
+  
+  // Extract frequencies from the first table header
+  const frequencyHeaders = bandSection.querySelectorAll('.matrix-table thead th:not(:first-child)');
+  const frequencies = [];
+  frequencyHeaders.forEach(header => {
+    let freq = header.textContent.trim();
+    // Remove 'MHz' if present
+    freq = freq.replace('MHz', '');
+    frequencies.push(freq);
+  });
+  
+  // Get power levels from the first table (Tx Power) if it exists
+  const txPowerTable = bandSection.querySelector('.matrix-table');
+  const powerLevels = [];
+  if (txPowerTable) {
+    const powerRows = txPowerTable.querySelectorAll('tbody tr');
+    powerRows.forEach(row => {
+      let power = row.querySelector('td:first-child').textContent.trim();
+      // Remove 'dBm' if present
+      power = power.replace('dBm', '').trim();
+      // Only add if it has a number (to filter out rows like "Measured" or "Diff.")
+      if (!isNaN(parseFloat(power))) {
+        powerLevels.push(power);
+      }
+    });
+  }
+  
+  // Get selected tests
+  const selectedTests = {
+    txPower: bandSection.querySelector('.matrix-header:has(span:contains("Tx Power"))') !== null,
+    txCurrent: bandSection.querySelector('.matrix-header:has(span:contains("Tx Current"))') !== null,
+    obw: bandSection.querySelector('.matrix-header:has(span:contains("OBW"))') !== null,
+    freqAccuracy: bandSection.querySelector('.matrix-header:has(span:contains("Frequency Accuracy"))') !== null
+  };
+  
+  // Populate the edit modal with the current values
+  populateEditBandModal(bandName, frequencies, powerLevels, selectedTests);
+  
+  // Open the modal
+  const modal = document.getElementById('band-modal');
+  
+  // Update modal title to indicate editing
+  modal.querySelector('.modal-header h2').textContent = 'Edit Band';
+  
+  // Update save button
+  const saveButton = modal.querySelector('#save-band-button');
+  // Store reference to the band section being edited
+  saveButton.dataset.editBandId = bandSection.id;
+  
+  modal.classList.add('active');
+}
+
+// Function to populate the edit band modal with current values
+function populateEditBandModal(bandName, frequencies, powerLevels, selectedTests) {
+  // Set band name
+  document.getElementById('band-name').value = bandName;
+  
+  // Clear existing frequency inputs except the first one
+  const frequencyContainer = document.getElementById('frequency-inputs');
+  while (frequencyContainer.children.length > 1) {
+    frequencyContainer.removeChild(frequencyContainer.lastChild);
+  }
+  
+  // Set first frequency and add the rest
+  if (frequencies.length > 0) {
+    frequencyContainer.querySelector('.frequency-input').value = frequencies[0];
+    
+    // Add the rest of the frequencies
+    for (let i = 1; i < frequencies.length; i++) {
+      addFrequencyInput();
+      frequencyContainer.lastChild.querySelector('.frequency-input').value = frequencies[i];
+    }
+  }
+  
+  // Clear existing power inputs except the first one
+  const powerContainer = document.getElementById('power-inputs');
+  while (powerContainer.children.length > 1) {
+    powerContainer.removeChild(powerContainer.lastChild);
+  }
+  
+  // Set first power level and add the rest
+  if (powerLevels.length > 0) {
+    powerContainer.querySelector('.power-input').value = powerLevels[0];
+    
+    // Add the rest of the power levels
+    for (let i = 1; i < powerLevels.length; i++) {
+      addPowerLevelInput();
+      powerContainer.lastChild.querySelector('.power-input').value = powerLevels[i];
+    }
+  }
+  
+  // Set checkboxes for selected tests
+  document.querySelector('input[name="test-txpower"]').checked = selectedTests.txPower;
+  document.querySelector('input[name="test-txcurrent"]').checked = selectedTests.txCurrent;
+  document.querySelector('input[name="test-obw"]').checked = selectedTests.obw;
+  document.querySelector('input[name="test-freqaccuracy"]').checked = selectedTests.freqAccuracy;
+}
+
+// Function to confirm band deletion
+function confirmDeleteBand(bandSection, bandName) {
+  // If custom modal is available, use it
+  if (window.customModal) {
+    window.customModal.confirm(
+      `Are you sure you want to delete ${bandName}? This action cannot be undone.`,
+      'Delete Band',
+      'warning'
+    ).then(confirmed => {
+      if (confirmed) {
+        deleteBand(bandSection);
+      }
+    });
+  } else {
+    // Fallback to standard confirm
+    const confirmed = confirm(`Are you sure you want to delete ${bandName}? This action cannot be undone.`);
+    if (confirmed) {
+      deleteBand(bandSection);
+    }
+  }
+}
+
+// Function to delete the band
+function deleteBand(bandSection) {
+  // Animate the removal
+  bandSection.style.transition = 'opacity 0.3s, max-height 0.5s';
+  bandSection.style.opacity = '0';
+  bandSection.style.maxHeight = '0';
+  bandSection.style.overflow = 'hidden';
+  
+  // Remove from DOM after animation completes
+  setTimeout(() => {
+    bandSection.remove();
+    
+    // Show confirmation if no bands left
+    const remainingBands = document.querySelectorAll('.band-section');
+    if (remainingBands.length === 0 && window.customModal) {
+      window.customModal.info('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
+    }
+  }, 500);
+  
+  // Show confirmation
+  if (window.customModal) {
+    window.customModal.success('Band deleted successfully', 'Band Management');
+  }
 }
 
 // Save the band configuration
@@ -225,18 +483,47 @@ function saveBand() {
     return;
   }
   
-  // Create the new band section
-  createBandSection(bandName, frequencies, powerLevels, selectedTests);
+  const saveButton = document.getElementById('save-band-button');
+  const editBandId = saveButton.dataset.editBandId;
+  
+  if (editBandId) {
+    // We're editing an existing band
+    const bandSection = document.getElementById(editBandId);
+    
+    if (bandSection) {
+      // Remove the existing band section
+      bandSection.remove();
+      
+      // Create a new one with the updated data
+      createBandSection(bandName, frequencies, powerLevels, selectedTests);
+      
+      // Show confirmation message
+      if (window.customModal) {
+        window.customModal.success(`Band ${bandName} has been updated successfully`, 'Success');
+      } else {
+        alert(`Band ${bandName} has been updated successfully`);
+      }
+    }
+    
+    // Clear the edit data attribute
+    saveButton.removeAttribute('data-edit-band-id');
+    
+    // Reset modal title
+    document.querySelector('#band-modal .modal-header h2').textContent = 'Add New Band';
+  } else {
+    // We're adding a new band
+    createBandSection(bandName, frequencies, powerLevels, selectedTests);
+    
+    // Show confirmation message
+    if (window.customModal) {
+      window.customModal.success(`Band ${bandName} has been added successfully`, 'Success');
+    } else {
+      alert(`Band ${bandName} has been added successfully`);
+    }
+  }
   
   // Close the modal
   closeAddBandModal();
-  
-  // Show confirmation message
-  if (window.customModal) {
-    window.customModal.success(`Band ${bandName} has been added successfully`, 'Success');
-  } else {
-    alert(`Band ${bandName} has been added successfully`);
-  }
 }
 
 // Create a new band section
@@ -249,10 +536,22 @@ function createBandSection(bandName, frequencies, powerLevels, selectedTests) {
   bandSection.className = 'band-section';
   bandSection.id = bandId;
   
-  // Create the band header
+  // Create the band header with edit and delete buttons
   const bandHeader = document.createElement('div');
   bandHeader.className = 'band-header';
-  bandHeader.innerHTML = `<h2>${bandName}</h2>`;
+  bandHeader.innerHTML = `
+    <div class="band-title-container">
+      <h2>${bandName}</h2>
+      <div class="band-actions">
+        <button class="icon-button rename-band" title="Rename Band">
+          <i class='bx bx-edit'></i>
+        </button>
+        <button class="icon-button delete-band" title="Delete Band">
+          <i class='bx bx-trash'></i>
+        </button>
+      </div>
+    </div>
+  `;
   
   // Create the test matrices container
   const testMatrices = document.createElement('div');
@@ -304,6 +603,13 @@ function createBandSection(bandName, frequencies, powerLevels, selectedTests) {
   
   // Initialize the inputs in the new tables
   initializeNewTableCells(bandSection);
+  
+  // Attach event listeners to the new buttons
+  const editButton = bandHeader.querySelector('.edit-band');
+  const deleteButton = bandHeader.querySelector('.delete-band');
+  
+  editButton.addEventListener('click', () => openEditBandModal(bandSection));
+  deleteButton.addEventListener('click', () => confirmDeleteBand(bandSection, bandName));
 }
 
 // Create a test matrix
