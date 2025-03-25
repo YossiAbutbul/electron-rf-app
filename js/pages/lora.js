@@ -95,8 +95,8 @@ function simulateTestRun(selectedTests) {
       'DR 12': {'917MHz': '500 kHz', '918.5MHz': '500 kHz', '919.7MHz': '500 kHz'}
     },
     'Frequency Accuracy': {
-      'At start': {'917MHz': '±0.1 ppm', '918.5MHz': '±0.1 ppm', '919.7MHz': '±0.1 ppm'},
-      'After 60 sec.': {'917MHz': '±0.2 ppm', '918.5MHz': '±0.2 ppm', '919.7MHz': '±0.2 ppm'}
+      'Measured': {'917MHz': '±0.1 ppm', '918.5MHz': '±0.1 ppm', '919.7MHz': '±0.1 ppm'},
+      'Diff.': {'917MHz': '±0.2 ppm', '918.5MHz': '±0.2 ppm', '919.7MHz': '±0.2 ppm'}
     }
   };
   
