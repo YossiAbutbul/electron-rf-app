@@ -1,0 +1,43 @@
+<!-- Band Selection Modal (shown when there are multiple bands) -->
+<div class="modal" id="band-selection-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Select Band</h2>
+      <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p>Select a band to add to the test matrix:</p>
+      <div class="band-selection-list">
+        <div class="band-option">
+          <label class="radio">
+            <input type="radio" name="band-selection" value="band-12" checked>
+            <span>Band 12 (700MHz)</span>
+          </label>
+        </div>
+        <div class="band-option">
+          <label class="radio">
+            <input type="radio" name="band-selection" value="band-4">
+            <span>Band 4 (1700MHz)</span>
+          </label>
+        </div>
+        <div class="band-option">
+          <label class="radio">
+            <input type="radio" name="band-selection" value="band-13">
+            <span>Band 13 (750MHz)</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-group custom-band-option">
+        <label class="radio">
+          <input type="radio" name="band-selection" value="custom">
+          <span>Custom Band</span>
+        </label>
+        <input type="text" id="custom-band-name" placeholder="Enter band name" disabled>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-button">Cancel</button>
+      <button class="primary-button" id="select-band">Select</button>
+    </div>
+  </div>
+</div>

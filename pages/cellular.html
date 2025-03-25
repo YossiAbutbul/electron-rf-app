@@ -1,308 +1,263 @@
 <div class="page-container">
-  <h1>Cellular Testing</h1>
+  <h1>Cellular Test</h1>
   
-  <div class="test-header">
+  <div class="test-controls">
     <button class="primary-button" id="start-test">Start Test</button>
-  </div>
-
-  <!-- Band 12 Section -->
-  <div class="band-section" id="band-12">
-    <div class="band-header">
-      <h2>Band 12 <i class='bx bx-pencil edit-band'></i></h2>
-    </div>
-    
-    <div class="test-panels">
-      <!-- TX Power Panel -->
-      <div class="test-panel">
-        <div class="panel-header">
-          <label class="checkbox">
-            <input type="checkbox" name="txpower-band12" checked>
-            <span>Tx Power</span>
-          </label>
-        </div>
-        
-        <div class="panel-content">
-          <table class="test-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>699MHz</th>
-                <th>707.5MHz</th>
-                <th>715.9MHz</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>0 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>14 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>20 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      <!-- TX Current Consumption Panel -->
-      <div class="test-panel">
-        <div class="panel-header">
-          <label class="checkbox">
-            <input type="checkbox" name="txcurrent-band12" checked>
-            <span>Tx Current Consumption</span>
-          </label>
-        </div>
-        
-        <div class="panel-content">
-          <table class="test-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>699MHz</th>
-                <th>707.5MHz</th>
-                <th>715.9MHz</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>0 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>14 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>20 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Band 4 Section -->
-  <div class="band-section" id="band-4">
-    <div class="band-header">
-      <h2>Band 4 <i class='bx bx-pencil edit-band'></i></h2>
-    </div>
-    
-    <div class="test-panels">
-      <!-- TX Power Panel -->
-      <div class="test-panel">
-        <div class="panel-header">
-          <label class="checkbox">
-            <input type="checkbox" name="txpower-band4" checked>
-            <span>Tx Power</span>
-          </label>
-        </div>
-        
-        <div class="panel-content">
-          <table class="test-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>1710MHz</th>
-                <th>1732.5MHz</th>
-                <th>1754.9MHz</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>0 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>14 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>20 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      <!-- TX Current Consumption Panel -->
-      <div class="test-panel">
-        <div class="panel-header">
-          <label class="checkbox">
-            <input type="checkbox" name="txcurrent-band4" checked>
-            <span>Tx Current Consumption</span>
-          </label>
-        </div>
-        
-        <div class="panel-content">
-          <table class="test-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>1710MHz</th>
-                <th>1732.5MHz</th>
-                <th>1754.9MHz</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>0 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>14 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-              <tr>
-                <td>20 dBm</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- OBW Section -->
-  <div class="band-section" id="obw-section">
-    <div class="band-header">
-      <h2>OBW <i class='bx bx-check'></i></h2>
-    </div>
-    
-    <div class="test-panels">
-      <div class="test-panel full-width">
-        <div class="panel-content">
-          <table class="test-table">
-            <thead>
-              <tr>
-                <th></th>
-                <th>707.5MHz</th>
-                <th>1732.5MHz</th>
-                <th>1880MHz</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>DR 7</td>
-                <td>-</td>
-                <td>-</td>
-                <td>-</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add Band Button -->
-  <div class="add-band-container">
-    <button class="add-button" id="add-band">
-      <i class='bx bx-plus'></i>
+    <button class="secondary-button" id="add-band-button">
+      <i class='bx bx-plus'></i> Add Band
     </button>
   </div>
+  
+  <!-- Band B12 Section -->
+  <div class="band-section" id="band-b12">
+    <div class="band-header">
+      <h2>Band 12</h2>
+    </div>
+    
+    <div class="test-matrices">
+      <div class="test-row">
+        <!-- TX Power Matrix -->
+        <div class="test-matrix">
+          <div class="matrix-header">
+            <label class="checkbox">
+              <input type="checkbox" checked>
+              <span>Tx Power</span>
+            </label>
+          </div>
+          <div class="table-container">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>699MHz</th>
+                  <th>707.5MHz</th>
+                  <th>715.9MHz</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0 dBm</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>14 dBm</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>20 dBm</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-  <!-- Band Configuration Modal -->
-  <div class="modal" id="band-config-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Band Configuration</h2>
-        <span class="close-modal">&times;</span>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="band-name">Band Name</label>
-          <input type="text" id="band-name" placeholder="e.g. Band 5">
-        </div>
-        
-        <div class="form-group">
-          <label>Frequencies (MHz)</label>
-          <div id="frequency-inputs">
-            <div class="frequency-input">
-              <input type="text" class="frequency" placeholder="e.g. 850">
-              <button class="remove-freq"><i class='bx bx-trash'></i></button>
-            </div>
-            <div class="frequency-input">
-              <input type="text" class="frequency" placeholder="e.g. 860">
-              <button class="remove-freq"><i class='bx bx-trash'></i></button>
-            </div>
-            <div class="frequency-input">
-              <input type="text" class="frequency" placeholder="e.g. 870">
-              <button class="remove-freq"><i class='bx bx-trash'></i></button>
-            </div>
-          </div>
-          <button class="add-freq-button" id="add-frequency">Add Frequency</button>
-        </div>
-        
-        <div class="form-group">
-          <label>Power Levels (dBm)</label>
-          <div id="power-inputs">
-            <div class="power-input">
-              <input type="text" class="power" value="0">
-              <button class="remove-power"><i class='bx bx-trash'></i></button>
-            </div>
-            <div class="power-input">
-              <input type="text" class="power" value="14">
-              <button class="remove-power"><i class='bx bx-trash'></i></button>
-            </div>
-            <div class="power-input">
-              <input type="text" class="power" value="20">
-              <button class="remove-power"><i class='bx bx-trash'></i></button>
-            </div>
-          </div>
-          <button class="add-power-button" id="add-power">Add Power Level</button>
-        </div>
-        
-        <div class="form-group">
-          <label>Include tests:</label>
-          <div class="checkbox-group">
+        <!-- TX Current Consumption Matrix -->
+        <div class="test-matrix">
+          <div class="matrix-header">
             <label class="checkbox">
-              <input type="checkbox" name="include-txpower" checked>
-              <span>TX Power</span>
-            </label>
-            <label class="checkbox">
-              <input type="checkbox" name="include-txcurrent" checked>
-              <span>TX Current Consumption</span>
+              <input type="checkbox" checked>
+              <span>Tx Current Consumption</span>
             </label>
           </div>
+          <div class="table-container">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>699MHz</th>
+                  <th>707.5MHz</th>
+                  <th>715.9MHz</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>0 dBm</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>14 dBm</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>20 dBm</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="cancel-button">Cancel</button>
-        <button class="save-button">Save</button>
+
+      <div class="test-row">
+        <!-- OBW Matrix -->
+        <div class="test-matrix">
+          <div class="matrix-header">
+            <label class="checkbox">
+              <input type="checkbox" checked>
+              <span>OBW</span>
+            </label>
+          </div>
+          <div class="table-container">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>699MHz</th>
+                  <th>707.5MHz</th>
+                  <th>715.9MHz</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>DR 7</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>DR 12</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Frequency Accuracy Matrix -->
+        <div class="test-matrix">
+          <div class="matrix-header">
+            <label class="checkbox">
+              <input type="checkbox" checked>
+              <span>Frequency Accuracy</span>
+            </label>
+          </div>
+          <div class="table-container">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>699MHz</th>
+                  <th>707.5MHz</th>
+                  <th>715.9MHz</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Measured</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Diff.</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Band Modal -->
+<div class="modal" id="band-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Add New Band</h2>
+      <span class="close-modal">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="band-name">Band Name</label>
+        <input type="text" id="band-name" placeholder="e.g. Band 13">
+      </div>
+      
+      <div class="form-group">
+        <label>Frequencies (MHz)</label>
+        <div id="frequency-inputs" class="input-group">
+          <div class="input-row">
+            <input type="text" class="frequency-input" placeholder="e.g. 700" value="750">
+            <button class="remove-input"><i class='bx bx-trash'></i></button>
+          </div>
+          <div class="input-row">
+            <input type="text" class="frequency-input" placeholder="e.g. 760" value="755">
+            <button class="remove-input"><i class='bx bx-trash'></i></button>
+          </div>
+          <div class="input-row">
+            <input type="text" class="frequency-input" placeholder="e.g. 770" value="760">
+            <button class="remove-input"><i class='bx bx-trash'></i></button>
+          </div>
+        </div>
+        <button class="add-input-button" id="add-frequency-button">
+          <i class='bx bx-plus'></i> Add Frequency
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label>Power Levels (dBm)</label>
+        <div id="power-inputs" class="input-group">
+          <div class="input-row">
+            <input type="text" class="power-input" placeholder="e.g. 0" value="0">
+            <button class="remove-input"><i class='bx bx-trash'></i></button>
+          </div>
+          <div class="input-row">
+            <input type="text" class="power-input" placeholder="e.g. 10" value="14">
+            <button class="remove-input"><i class='bx bx-trash'></i></button>
+          </div>
+          <div class="input-row">
+            <input type="text" class="power-input" placeholder="e.g. 20" value="20">
+            <button class="remove-input"><i class='bx bx-trash'></i></button>
+          </div>
+        </div>
+        <button class="add-input-button" id="add-power-button">
+          <i class='bx bx-plus'></i> Add Power Level
+        </button>
+      </div>
+      
+      <div class="form-group">
+        <label>Tests to Include</label>
+        <div class="checkbox-group">
+          <label class="checkbox">
+            <input type="checkbox" name="test-txpower" checked>
+            <span>TX Power</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="test-txcurrent" checked>
+            <span>TX Current Consumption</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="test-obw" checked>
+            <span>OBW</span>
+          </label>
+          <label class="checkbox">
+            <input type="checkbox" name="test-freqaccuracy" checked>
+            <span>Frequency Accuracy</span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="cancel-button">Cancel</button>
+      <button class="primary-button" id="save-band-button">Save</button>
     </div>
   </div>
 </div>

@@ -46,13 +46,20 @@ function updateActiveNavItem() {
   });
 }
 
+// Safe way to close any modal
+function safeCloseModal(modalElement) {
+  if (modalElement && modalElement.classList) {
+    modalElement.classList.remove('active');
+  }
+}
+
 // Initialize functionality for specific pages
 function initPageFunctions(pageName) {
   // Common elements that might exist on multiple pages
   const connectDutButton = document.getElementById('connect-dut');
   const bleDevicesModal = document.getElementById('ble-devices-modal');
-  const closeModal = document.querySelector('.close-modal');
-  const cancelButton = document.querySelector('.cancel-button');
+  const closeModals = document.querySelectorAll('.close-modal');
+  const cancelButtons = document.querySelectorAll('.cancel-button');
   const connectButton = document.querySelector('.connect-button');
   const bleDeviceList = document.getElementById('ble-device-list');
   
@@ -90,15 +97,23 @@ function initPageFunctions(pageName) {
     });
   }
   
-  if (closeModal) {
-    closeModal.addEventListener('click', () => {
-      bleDevicesModal.classList.remove('active');
+  // Handle all close modal buttons
+  if (closeModals && closeModals.length > 0) {
+    closeModals.forEach(closeBtn => {
+      closeBtn.addEventListener('click', () => {
+        const modal = closeBtn.closest('.modal');
+        safeCloseModal(modal);
+      });
     });
   }
   
-  if (cancelButton) {
-    cancelButton.addEventListener('click', () => {
-      bleDevicesModal.classList.remove('active');
+  // Handle all cancel buttons
+  if (cancelButtons && cancelButtons.length > 0) {
+    cancelButtons.forEach(cancelBtn => {
+      cancelBtn.addEventListener('click', () => {
+        const modal = cancelBtn.closest('.modal');
+        safeCloseModal(modal);
+      });
     });
   }
   
@@ -110,10 +125,13 @@ function initPageFunctions(pageName) {
         const deviceName = selectedDevice.dataset.name;
         
         // Update UI to show connected device
-        document.querySelector('.device-name').textContent = deviceName;
-        document.querySelector('.device-id').textContent = deviceId;
+        const deviceNameElement = document.querySelector('.device-name');
+        const deviceIdElement = document.querySelector('.device-id');
         
-        bleDevicesModal.classList.remove('active');
+        if (deviceNameElement) deviceNameElement.textContent = deviceName;
+        if (deviceIdElement) deviceIdElement.textContent = deviceId;
+        
+        safeCloseModal(bleDevicesModal);
         // Replace alert with custom modal
         window.customModal.success(`Connected to ${deviceName}`, 'Connection Successful');
       } else {
@@ -188,7 +206,10 @@ function initLoraPage() {
       window.customModal.confirm('Are you sure you want to start the LoRa test?', 'Start Test')
         .then(confirmed => {
           if (confirmed) {
-            document.querySelector('.results-container').innerHTML = 'Test in progress...';
+            const resultsContainer = document.querySelector('.results-container');
+            if (resultsContainer) {
+              resultsContainer.innerHTML = 'Test in progress...';
+            }
             window.customModal.info('LoRa test started. Monitoring in progress...', 'LoRa Test');
           }
         });
@@ -201,7 +222,10 @@ function initLoraPage() {
       window.customModal.warning('Stopping the test will terminate data collection. Continue?', 'Stop Test')
         .then(confirmed => {
           if (confirmed) {
-            document.querySelector('.results-container').innerHTML = 'Test stopped by user.';
+            const resultsContainer = document.querySelector('.results-container');
+            if (resultsContainer) {
+              resultsContainer.innerHTML = 'Test stopped by user.';
+            }
             window.customModal.info('Test stopped by user', 'LoRa Test');
           }
         });
@@ -287,4 +311,19 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.blur();
     });
   }, 100);
+  
+  // Add global handler for all modal close buttons and cancel buttons
+  document.addEventListener('click', function(e) {
+    // Handle modal close buttons
+    if (e.target.closest('.close-modal')) {
+      const modal = e.target.closest('.modal');
+      safeCloseModal(modal);
+    }
+    
+    // Handle cancel buttons
+    if (e.target.closest('.cancel-button')) {
+      const modal = e.target.closest('.modal');
+      safeCloseModal(modal);
+    }
+  });
 });
