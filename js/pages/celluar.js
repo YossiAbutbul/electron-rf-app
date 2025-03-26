@@ -1,33 +1,10 @@
-// Cellular page functionality
-function initCellularPage() {
-  console.log('Cellular page initialized');
-  
-  // Initialize all cells with input fields
-  initializeTableCells();
-  
-  // Setup event listeners
-  setupEventListeners();
-  
-  // Update existing band headers to add edit/delete buttons
-  updateExistingBandHeaders();
-  
-  // Setup event delegation for dynamically created elements
-  setupEventDelegation();
-
-// Initialize all table cells with input fields
-function initializeTableCells() {
-  const tableCells = document.querySelectorAll('.matrix-table td:not(:first-child)');
-  tableCells.forEach(cell => {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.className = 'cell-input';
-    input.placeholder = '-';
-    cell.appendChild(input);
-  });
-}
+// Cellular page functionality - Proper order of function definitions
+// Note: Function declarations must come BEFORE they are used
 
 // Set up all event listeners
-const testCheckboxes = document.querySelectorAll('.matrix-header input[type="checkbox"]');
+function setupEventListeners() {
+  // Test matrix checkbox functionality - UPDATED
+  const testCheckboxes = document.querySelectorAll('.matrix-header input[type="checkbox"]');
   testCheckboxes.forEach(checkbox => {
     checkbox.addEventListener('change', function() {
       const testMatrix = this.closest('.test-matrix');
@@ -141,6 +118,18 @@ function setupEventDelegation() {
   });
 }
 
+// Initialize all table cells with input fields
+function initializeTableCells() {
+  const tableCells = document.querySelectorAll('.matrix-table td:not(:first-child)');
+  tableCells.forEach(cell => {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'cell-input';
+    input.placeholder = '-';
+    cell.appendChild(input);
+  });
+}
+
 // Update existing band headers to include edit and delete buttons
 function updateExistingBandHeaders() {
   // This function can be called during page initialization
@@ -180,6 +169,23 @@ function updateExistingBandHeaders() {
     titleContainer.appendChild(actions);
     header.appendChild(titleContainer);
   });
+}
+
+// Cellular page initialization - AFTER all other functions are defined
+function initCellularPage() {
+  console.log('Cellular page initialized');
+  
+  // Initialize all cells with input fields
+  initializeTableCells();
+  
+  // Setup event listeners
+  setupEventListeners();
+  
+  // Update existing band headers to add edit/delete buttons
+  updateExistingBandHeaders();
+  
+  // Setup event delegation for dynamically created elements
+  setupEventDelegation();
 }
 
 // Open the Add Band Modal
@@ -416,12 +422,6 @@ function populateEditBandModal(bandName, frequencies, powerLevels, selectedTests
     
     powerContainer.appendChild(inputRow);
   }
-  
-  // Set checkboxes for selected tests
-  document.querySelector('input[name="test-txpower"]').checked = selectedTests.txPower;
-  document.querySelector('input[name="test-txcurrent"]').checked = selectedTests.txCurrent;
-  document.querySelector('input[name="test-obw"]').checked = selectedTests.obw;
-  document.querySelector('input[name="test-freqaccuracy"]').checked = selectedTests.freqAccuracy;
   // Set checkboxes for selected tests
   document.querySelector('input[name="test-txpower"]').checked = selectedTests.txPower;
   document.querySelector('input[name="test-txcurrent"]').checked = selectedTests.txCurrent;
@@ -746,6 +746,7 @@ function createTestMatrix(testName, frequencies, rowLabels, showPowerUnits) {
   return matrix;
 }
 
+// Initialize input fields for newly created tables
 function initializeNewTableCells(container) {
   const tableCells = container.querySelectorAll('.matrix-table td:not(:first-child)');
   tableCells.forEach(cell => {
