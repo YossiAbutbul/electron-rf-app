@@ -1,6 +1,7 @@
 /* BLE page specific styles */
 .page-container {
   padding: 10px;
+  position: relative;
 }
 
 @media (max-width: 768px) {
@@ -9,10 +10,23 @@
   }
 }
 
+/* Sticky header styles */
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-bg-primary);
+  padding: 10px 0;
+  margin: -10px 0 20px 0;
+  padding-top: 15px;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
 h1 {
   font-size: 24px;
   font-weight: 500;
-  margin-bottom: 25px;
+  padding-top: 30px;
+  /* margin-bottom: 15px; */
   color: var(--color-text-secondary);
   padding-bottom: 15px;
   border-bottom: none;
@@ -79,6 +93,37 @@ h1 {
   border-bottom: none;
 }
 
+.matrix-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.matrix-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: var(--color-text-light);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.icon-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--color-accent);
+}
+
 .checkbox {
   display: flex;
   align-items: center;
@@ -92,6 +137,11 @@ h1 {
 .table-container {
   width: 100%;
   overflow-x: auto;
+}
+
+.table-container.disabled {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .matrix-table {
@@ -199,54 +249,14 @@ input[type="checkbox"]:checked::after {
   transform: rotate(45deg);
 }
 
-.disabled {
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-/* BLE specific styles */
-.ble-device-card {
-  padding: 15px;
+/* Secondary button style */
+.secondary-button {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
   border: 1px solid var(--color-border-light);
   border-radius: 10px;
-  margin-bottom: 15px;
-  background-color: var(--color-bg-primary);
-}
-
-.ble-device-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.ble-device-name {
+  padding: 8px 16px;
   font-weight: 500;
-  font-size: 16px;
-}
-
-.ble-device-address {
-  font-size: 12px;
-  color: var(--color-text-light);
-}
-
-.ble-connection-status {
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-}
-
-.ble-status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 5px;
-}
-
-.ble-status-connected {
-  background-color: var(--color-status-online);
-}
-
-.ble-status-disconnected {
-  background-color: var(--color-status-offline);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
