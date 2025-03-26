@@ -160,7 +160,8 @@ function initConfigurationPage() {
       // Simulate connection check
       setTimeout(() => {
         // Replace alert with custom modal
-        window.customModal.success('Connection successful!', 'Spectrum Analyzer');
+        const spectrumAnalyzerAddress = document.getElementById('spectrum-analyzer').value;
+        window.customModal.success(`Connection successful at ${spectrumAnalyzerAddress}!`, 'Spectrum Analyzer');
       }, 500);
     });
   }
@@ -177,7 +178,8 @@ function initConfigurationPage() {
       // Simulate connection check
       setTimeout(() => {
         // Replace alert with custom modal
-        window.customModal.success('Connection successful!', 'Power Analyzer');
+        const powerAnalyzerAddress = document.getElementById('power-analyzer').value;
+        window.customModal.success(`Connection successful at ${powerAnalyzerAddress}!`, 'Power Analyzer');
       }, 500);
     });
   }

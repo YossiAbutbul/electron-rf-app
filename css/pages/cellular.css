@@ -369,9 +369,7 @@
 
 /* Checkbox group arranged in grid for better space usage */
 .checkbox-group {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 30px;
 }
 
 /* Add animation to the modal */

@@ -14,18 +14,25 @@ function initLoraPage() {
   
   // Set up event listeners for the test selection checkboxes
   testCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      // Find the parent test-matrix and enable/disable it
-      const testMatrix = this.closest('.test-matrix');
-      if (testMatrix) {
+  checkbox.addEventListener('change', function() {
+    // Find the parent test-matrix
+    const testMatrix = this.closest('.test-matrix');
+    if (testMatrix) {
+      // Find the table container specifically
+      const tableContainer = testMatrix.querySelector('.table-container');
+      if (tableContainer) {
         if (this.checked) {
-          testMatrix.classList.remove('disabled');
+          // When re-checked, make sure to remove the disabled class from the table container
+          tableContainer.classList.remove('disabled');
         } else {
-          testMatrix.classList.add('disabled');
+          // When unchecked, add the disabled class to the table container only
+          tableContainer.classList.add('disabled');
         }
       }
-    });
+    }
   });
+});
+
 
   // Convert all cells to input fields by default
   tableCells.forEach(cell => {
