@@ -1,0 +1,181 @@
+<div class="page-container">
+  <h1>BLE Test</h1>
+  
+  <div class="test-controls">
+    <button class="primary-button" id="start-test">Start Test</button>
+  </div>
+  
+  <div class="test-matrices">
+    <div class="test-row">
+      <!-- TX Power Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>Tx Power</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>2402MHz</th>
+                <th>2446MHz</th>
+                <th>2480MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>3 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>6 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>10 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TX Current Consumption Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>Tx Current Consumption</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>2402MHz</th>
+                <th>2446MHz</th>
+                <th>2480MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>3 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>6 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>10 dBm</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-row">
+      <!-- OBW Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>OBW</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>2402MHz</th>
+                <th>2446MHz</th>
+                <th>2480MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1Mbps</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>2Mbps</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Frequency Accuracy Matrix -->
+      <div class="test-matrix">
+        <div class="matrix-header">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span>Frequency Accuracy</span>
+          </label>
+        </div>
+        <div class="table-container">
+          <table class="matrix-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>2402MHz</th>
+                <th>2446MHz</th>
+                <th>2480MHz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Measured</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+              <tr>
+                <td>Diff.</td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+                <td><input type="number" class="cell-input" placeholder="-"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
