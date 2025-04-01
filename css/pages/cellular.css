@@ -471,3 +471,38 @@
 .band-section {
   transition: opacity 0.3s, max-height 0.5s;
 }
+/* Styling for frequency input in modal */
+#frequency-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#frequency-inputs .input-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+#frequency-inputs .frequency-input {
+  flex-grow: 1;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+#frequency-inputs .remove-input {
+  background: none;
+  border: none;
+  color: var(--color-text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#frequency-inputs .remove-input:hover {
+  color: var(--color-status-offline);
+}

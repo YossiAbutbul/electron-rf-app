@@ -54,10 +54,12 @@ function setupEventListeners() {
   // Add frequency button
   const addFrequencyButton = document.getElementById('add-frequency-button');
   if (addFrequencyButton) {
-    console.log('Add frequency button found, attaching event listener');
+    // Remove any existing listeners first to prevent multiple attachments
+    addFrequencyButton.removeEventListener('click', addFrequencyInput);
     addFrequencyButton.addEventListener('click', addFrequencyInput);
+    console.log('Add frequency button event listener attached');
   } else {
-    console.error('Add frequency button not found in DOM');
+    console.error('Add frequency button not found in modal');
   }
 
   // Add power level button
@@ -79,19 +81,19 @@ function setupEventDelegation() {
   document.addEventListener('click', function(e) {
     // Handle remove frequency or power input button clicks
     if (e.target.closest('.remove-input')) {
-      const inputRow = e.target.closest('.input-row');
-      if (!inputRow) return; // Exit if no input row found
-      
-      const container = inputRow.parentElement;
-      if (!container) return; // Exit if no container found
-      
-      // Only remove if there's more than one input
-      const inputRows = container.querySelectorAll('.input-row');
-      if (!inputRows || inputRows.length <= 1) {
-        if (window.customModal) {
-          window.customModal.warning('At least one input is required', 'Validation');
-        } else {
-          alert('At least one input is required');
+    const inputRow = e.target.closest('.input-row');
+    const container = inputRow.parentElement;
+    
+    // Only remove if more than one input exists
+    const inputRows = container.querySelectorAll('.input-row');
+    if (inputRows.length > 1) {
+      inputRow.remove();
+    } else {
+      // Prevent removing the last input
+      if (window.customModal) {
+        window.customModal.warning('At least one frequency is required', 'Validation');
+      } else {
+        alert('At least one frequency is required');
         }
         return;
       }
@@ -303,6 +305,7 @@ function resetBandModal() {
 }
 
 // Add a frequency input field
+// Add a frequency input field
 function addFrequencyInput() {
   console.log('addFrequencyInput function called');
   
@@ -311,12 +314,15 @@ function addFrequencyInput() {
   // Verify the container exists before proceeding
   if (!container) {
     console.error('Could not find frequency inputs container');
+    if (window.customModal) {
+      window.customModal.error('Could not find frequency input container', 'Error');
+    }
     return;
   }
   
-  // Count existing inputs for debugging
-  const existingInputs = container.querySelectorAll('.frequency-input').length;
-  console.log(`Current number of frequency inputs: ${existingInputs}`);
+  // Log current inputs before adding
+  const currentInputs = container.querySelectorAll('.frequency-input');
+  console.log(`Current frequency inputs before adding: ${currentInputs.length}`);
   
   // Create the new input row
   const inputRow = document.createElement('div');
@@ -325,20 +331,20 @@ function addFrequencyInput() {
   // Set the HTML content including the input field and remove button
   inputRow.innerHTML = `
     <input type="text" class="frequency-input" placeholder="e.g. 700">
-    <button class="remove-input"><i class='bx bx-trash'></i></button>
+    <button class="remove-input" type="button"><i class='bx bx-trash'></i></button>
   `;
   
   // Append the new row to the container
   container.appendChild(inputRow);
   
-  // Verify addition
-  const newInputs = container.querySelectorAll('.frequency-input').length;
-  console.log(`Number of frequency inputs after adding: ${newInputs}`);
+  // Verify inputs after adding
+  const newInputs = container.querySelectorAll('.frequency-input');
+  console.log(`Frequency inputs after adding: ${newInputs.length}`);
   
-  if (newInputs <= existingInputs) {
-    console.error('Failed to add new frequency input!');
-  } else {
-    console.log('Successfully added new frequency input');
+  // Focus on the newly added input
+  const newInput = inputRow.querySelector('.frequency-input');
+  if (newInput) {
+    newInput.focus();
   }
 }
 
