@@ -1,223 +1,16 @@
-// Create a new band section
-function createBandSection(bandName, frequencies, powerLevels, selectedTests) {
-  // Create band ID (for DOM)
-  const bandId = 'band-' + bandName.toLowerCase().replace(/\s+/g, '-');
-  
-  // Create the band section container
-  const bandSection = document.createElement('div');
-  bandSection.className = 'band-section';
-  bandSection.id = bandId;
-  
-  // Create the band header with edit and delete buttons
-  const bandHeader = document.createElement('div');
-  bandHeader.className = 'band-header';
-  bandHeader.innerHTML = `
-    <div class="band-title-container">
-      <h2>${bandName}</h2>
-      <div class="band-actions">
-        <button class="icon-button edit-band" title="Edit Band">
-          <i class='bx bx-edit'></i>
-        </button>
-        <button class="icon-button delete-band" title="Delete Band">
-          <i class='bx bx-trash'></i>
-        </button>
-      </div>
-    </div>
-  `;
-  
-  // Create the test matrices container
-  const testMatrices = document.createElement('div');
-  testMatrices.className = 'test-matrices';
-  
-  // Create first row of tests (TX Power and TX Current)
-  if (selectedTests.txPower || selectedTests.txCurrent) {
-    const row1 = document.createElement('div');
-    row1.className = 'test-row';
-    
-    // Add TX Power matrix if selected
-    if (selectedTests.txPower) {
-      row1.appendChild(createTestMatrix('Tx Power', frequencies, powerLevels, true));
-    }
-    
-    // Add TX Current Consumption matrix if selected
-    if (selectedTests.txCurrent) {
-      row1.appendChild(createTestMatrix('Tx Current Consumption', frequencies, powerLevels, true));
-    }
-    
-    testMatrices.appendChild(row1);
-  }
-  
-  // Create second row of tests (OBW and Frequency Accuracy)
-  if (selectedTests.obw || selectedTests.freqAccuracy) {
-    const row2 = document.createElement('div');
-    row2.className = 'test-row';
-    
-    // Add OBW matrix if selected
-    if (selectedTests.obw) {
-      row2.appendChild(createTestMatrix('OBW', frequencies, ['DR 7', 'DR 12'], false));
-    }
-    
-    // Add Frequency Accuracy matrix if selected
-    if (selectedTests.freqAccuracy) {
-      row2.appendChild(createTestMatrix('Frequency Accuracy', frequencies, ['Measured', 'Diff.'], false));
-    }
-    
-    testMatrices.appendChild(row2);
-  }
-  
-  // Assemble the band section
-  bandSection.appendChild(bandHeader);
-  bandSection.appendChild(testMatrices);
-  
-  // Add to the page container (before test controls)
-  const pageContainer = document.querySelector('.page-container');
-  const testControls = document.querySelector('.test-controls');
-  
-  if (testControls && pageContainer) {
-    pageContainer.insertBefore(bandSection, testControls.nextSibling);
-  } else {
-    pageContainer.appendChild(bandSection);
-  }
-  
-  // Initialize the inputs in the new tables
-  initializeNewTableCells(bandSection);
-}
-
-// Create a test matrix
-function createTestMatrix(testName, frequencies, rowLabels, showPowerUnits) {
-  // Create matrix container
-  const matrix = document.createElement('div');
-  matrix.className = 'test-matrix';
-  
-  // Create matrix header
-  const header = document.createElement('div');
-  header.className = 'matrix-header';
-  header.innerHTML = `
-    <label class="checkbox">
-      <input type="checkbox" checked>
-      <span>${testName}</span>
-    </label>
-  `;
-  
-  // Create table container
-  const tableContainer = document.createElement('div');
-  tableContainer.className = 'table-container';
-  
-  // Create table
-  const table = document.createElement('table');
-  table.className = 'matrix-table';
-  
-  // Create table header
-  const thead = document.createElement('thead');
-  let headerRow = '<tr><th></th>';
-  
-  frequencies.forEach(freq => {
-    headerRow += `<th>${freq}MHz</th>`;
-  });
-  
-  headerRow += '</tr>';
-  thead.innerHTML = headerRow;
-  
-  // Create table body
-  const tbody = document.createElement('tbody');
-  
-  rowLabels.forEach(label => {
-    const row = document.createElement('tr');
-    
-    // Create the first cell with the label
-    const firstCell = document.createElement('td');
-    firstCell.textContent = showPowerUnits ? `${label} dBm` : label;
-    row.appendChild(firstCell);
-    
-    // Create cells for each frequency
-    frequencies.forEach(() => {
-      const cell = document.createElement('td');
-      row.appendChild(cell);
-    });
-    
-    tbody.appendChild(row);
-  });
-  
-  // Assemble the table
-  table.appendChild(thead);
-  table.appendChild(tbody);
-  tableContainer.appendChild(table);
-  
-  // Assemble the matrix
-  matrix.appendChild(header);
-  matrix.appendChild(tableContainer);
-  
-  return matrix;
-}
-
-// Initialize input fields for newly created tables
-function initializeNewTableCells(container) {
-  const tableCells = container.querySelectorAll('.matrix-table td:not(:first-child)');
-  tableCells.forEach(cell => {
-    convertCellToInput(cell);
-  });
-  
-  // Add event listener for newly created checkboxes
-  const testCheckboxes = container.querySelectorAll('.matrix-header input[type="checkbox"]');
-  testCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener('change', function() {
-      // Find the parent test-matrix
-      const testMatrix = this.closest('.test-matrix');
-      if (testMatrix) {
-        // Find the table container specifically
-        const tableContainer = testMatrix.querySelector('.table-container');
-        if (tableContainer) {
-          if (this.checked) {
-            // When re-checked, make sure to remove the disabled class from the table container
-            tableContainer.classList.remove('disabled');
-          } else {
-            // When unchecked, add the disabled class to the table container only
-            tableContainer.classList.add('disabled');
-          }
-        }
-      }
-    });
-  });
-}
-
-// Helper function to find an element containing specific text
-function findElementContainingText(container, selector, text) {
-  const elements = container.querySelectorAll(selector);
-  for (let i = 0; i < elements.length; i++) {
-    if (elements[i].textContent.includes(text)) {
-      return elements[i];
-    }
-  }
-  return null;
-}
-
-// Helper function to find all elements containing specific text
-function findElementsContainingText(container, selector, text) {
-  const elements = container.querySelectorAll(selector);
-  return Array.from(elements).filter(element => 
-    element.textContent.includes(text)
-  );
-}
-
-// Make the initialization function available globally for renderer.js
-window.initLoraPage = initLoraPage;// This function will be called when the LoRa page is loaded
+// This function will be called when the LoRa page is loaded
 function initLoraPage() {
   console.log('LoRa test page initialized');
   
   // Get references to the elements
   const startTestButton = document.getElementById('start-test');
-  const addBandButton = document.getElementById('add-band-button');
   const testCheckboxes = document.querySelectorAll('.matrix-header input[type="checkbox"]');
   const tableCells = document.querySelectorAll('.matrix-table td:not(:first-child)');
+  const editMatrixButtons = document.querySelectorAll('.edit-matrix');
   
   // Add event listener to the Start Test button
   if (startTestButton) {
     startTestButton.addEventListener('click', startLoRaTest);
-  }
-  
-  // Add event listener to the Add Band button
-  if (addBandButton) {
-    addBandButton.addEventListener('click', openAddBandModal);
   }
   
   // Set up event listeners for the test selection checkboxes
@@ -241,33 +34,43 @@ function initLoraPage() {
     });
   });
 
+  // Set up event listeners for the edit matrix buttons
+  editMatrixButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const matrix = this.closest('.test-matrix');
+      if (matrix) {
+        openEditMatrixModal(matrix);
+      }
+    });
+  });
+
   // Convert all cells to input fields by default
   tableCells.forEach(cell => {
     convertCellToInput(cell);
   });
   
-  // Set up modal event listeners
+  // Setup modal event listeners
   setupModalEventListeners();
-  
-  // Set up event delegation for dynamically created elements
-  setupEventDelegation();
-  
-  // Update band headers to include edit/delete buttons
-  updateExistingBandHeaders();
 }
 
 // Setup modal event listeners
 function setupModalEventListeners() {
-  // Modal close button
-  const closeModalButton = document.querySelector('#band-modal .close-modal');
+  // Close modal on X button click
+  const closeModalButton = document.querySelector('#edit-matrix-modal .close-modal');
   if (closeModalButton) {
-    closeModalButton.addEventListener('click', closeAddBandModal);
+    closeModalButton.addEventListener('click', closeEditMatrixModal);
   }
 
-  // Modal cancel button
-  const cancelButton = document.querySelector('#band-modal .cancel-button');
+  // Close modal on Cancel button click
+  const cancelButton = document.querySelector('#edit-matrix-modal .cancel-button');
   if (cancelButton) {
-    cancelButton.addEventListener('click', closeAddBandModal);
+    cancelButton.addEventListener('click', closeEditMatrixModal);
+  }
+
+  // Save matrix on Save button click
+  const saveButton = document.getElementById('save-matrix-button');
+  if (saveButton) {
+    saveButton.addEventListener('click', saveMatrixChanges);
   }
 
   // Add frequency button
@@ -276,105 +79,32 @@ function setupModalEventListeners() {
     addFrequencyButton.addEventListener('click', addFrequencyInput);
   }
 
-  // Add power level button
-  const addPowerButton = document.getElementById('add-power-button');
-  if (addPowerButton) {
-    addPowerButton.addEventListener('click', addPowerLevelInput);
+  // Add parameter button
+  const addParameterButton = document.getElementById('add-parameter-button');
+  if (addParameterButton) {
+    addParameterButton.addEventListener('click', addParameterInput);
   }
-
-  // Save band button
-  const saveBandButton = document.getElementById('save-band-button');
-  if (saveBandButton) {
-    saveBandButton.addEventListener('click', saveBand);
-  }
-}
-
-// Setup event delegation for dynamically created elements
-function setupEventDelegation() {
-  // Handle clicks using event delegation
-  document.addEventListener('click', function(e) {
-    // Handle remove frequency or power input button clicks
-    if (e.target.closest('.remove-input')) {
-      const inputRow = e.target.closest('.input-row');
-      if (!inputRow) return; // Exit if no input row found
-      
-      const container = inputRow.parentElement;
-      if (!container) return; // Exit if no container found
-      
-      // Only remove if there's more than one input
-      const inputRows = container.querySelectorAll('.input-row');
-      if (!inputRows || inputRows.length <= 1) {
-        if (window.customModal) {
-          window.customModal.warning('At least one input is required', 'Validation');
-        } else {
-          alert('At least one input is required');
-        }
-        return;
-      }
-      
-      // Remove the row
-      inputRow.remove();
-    }
-    
-    // Handle edit band button clicks using event delegation
-    if (e.target.closest('.edit-band')) {
-      const editButton = e.target.closest('.edit-band');
-      const bandSection = editButton.closest('.band-section');
-      if (bandSection) {
-        openEditBandModal(bandSection);
-      }
-    }
-    
-    // Handle delete band button clicks using event delegation
-    if (e.target.closest('.delete-band')) {
-      const deleteButton = e.target.closest('.delete-band');
-      const bandSection = deleteButton.closest('.band-section');
-      if (bandSection) {
-        const bandName = bandSection.querySelector('.band-header h2').textContent.trim();
-        confirmDeleteBand(bandSection, bandName);
-      }
-    }
-  });
-}
-
-// Update existing band headers to include edit and delete buttons
-function updateExistingBandHeaders() {
-  // This function can be called during page initialization
-  const existingBandHeaders = document.querySelectorAll('.band-header');
   
-  existingBandHeaders.forEach(header => {
-    // Check if the header already has the title container structure
-    if (header.querySelector('.band-title-container')) {
-      return; // Skip to the next header - already has the right structure
+  // Event delegation for remove buttons (for dynamically added elements)
+  document.addEventListener('click', function(e) {
+    // Check if clicked element is a remove button
+    if (e.target.closest('.remove-input')) {
+      const button = e.target.closest('.remove-input');
+      const inputRow = button.closest('.input-row');
+      const container = inputRow.parentElement;
+      
+      // Check if we have more than one input
+      if (container.querySelectorAll('.input-row').length > 1) {
+        inputRow.remove();
+      } else {
+        // Don't allow removing the last input
+        if (window.customModal) {
+          window.customModal.warning('At least one item is required', 'Cannot Remove');
+        } else {
+          alert('At least one item is required');
+        }
+      }
     }
-    
-    // Get the band name
-    const bandName = header.querySelector('h2').textContent.trim();
-    const bandSection = header.closest('.band-section');
-    
-    // Create the new structure
-    const titleContainer = document.createElement('div');
-    titleContainer.className = 'band-title-container';
-    
-    // Move the h2 inside the container
-    const h2 = header.querySelector('h2');
-    header.removeChild(h2);
-    titleContainer.appendChild(h2);
-    
-    // Add action buttons
-    const actions = document.createElement('div');
-    actions.className = 'band-actions';
-    actions.innerHTML = `
-      <button class="icon-button edit-band" title="Edit Band">
-        <i class='bx bx-edit'></i>
-      </button>
-      <button class="icon-button delete-band" title="Delete Band">
-        <i class='bx bx-trash'></i>
-      </button>
-    `;
-    
-    titleContainer.appendChild(actions);
-    header.appendChild(titleContainer);
   });
 }
 
@@ -421,98 +151,188 @@ function clearTestResults() {
 
 // Function to simulate a test run with sample data
 function simulateTestRun(selectedTests) {
-  // Sample data for each test type
-  const sampleData = {
-    'Tx Power': {
-      '0 dBm': {'917MHz': '-30.2', '918.5MHz': '-30.5', '919.7MHz': '-30.3'},
-      '14 dBm': {'917MHz': '-16.3', '918.5MHz': '-16.1', '919.7MHz': '-16.4'},
-      '20 dBm': {'917MHz': '-10.2', '918.5MHz': '-10.3', '919.7MHz': '-10.1'},
-      '30 dBm': {'917MHz': '-0.3', '918.5MHz': '-0.2', '919.7MHz': '-0.4'}
+  // Get the actual frequencies and parameters from the tables
+  const matrixData = {
+    'tx-power-matrix': {
+      frequencies: getColumnHeaders('tx-power-matrix'),
+      parameters: getRowLabels('tx-power-matrix')
     },
-    'Tx Current Consumption': {
-      '0 dBm': {'917MHz': '22', '918.5MHz': '23', '919.7MHz': '22'},
-      '14 dBm': {'917MHz': '35', '918.5MHz': '36', '919.7MHz': '35'},
-      '20 dBm': {'917MHz': '48', '918.5MHz': '49', '919.7MHz': '48'},
-      '30 dBm': {'917MHz': '65', '918.5MHz': '66', '919.7MHz': '65'}
+    'tx-current-matrix': {
+      frequencies: getColumnHeaders('tx-current-matrix'),
+      parameters: getRowLabels('tx-current-matrix')
     },
-    'OBW': {
-      'DR 7': {'917MHz': '125', '918.5MHz': '125', '919.7MHz': '125'},
-      'DR 12': {'917MHz': '500', '918.5MHz': '500', '919.7MHz': '500'}
+    'obw-matrix': {
+      frequencies: getColumnHeaders('obw-matrix'),
+      parameters: getRowLabels('obw-matrix')
     },
-    'Frequency Accuracy': {
-      'Measured': {'917MHz': '±0.1', '918.5MHz': '±0.1', '919.7MHz': '±0.1'},
-      'Diff.': {'917MHz': '±0.2', '918.5MHz': '±0.2', '919.7MHz': '±0.2'}
+    'freq-accuracy-matrix': {
+      frequencies: getColumnHeaders('freq-accuracy-matrix'),
+      parameters: getRowLabels('freq-accuracy-matrix')
     }
   };
+  
+  // Generate sample data based on the actual table structure
+  const sampleData = generateSampleData(matrixData);
   
   // Simulate a test run with delays
   let delay = 500;
   
-  // For each band section
-  const bandSections = document.querySelectorAll('.band-section');
-  
-  bandSections.forEach((bandSection) => {
-    selectedTests.forEach(testType => {
-      // Find the table for this test type using our helper function
-      const testHeader = findElementContainingText(bandSection, '.matrix-header .checkbox span', testType);
-      if (!testHeader) return;
+  for (const testType of selectedTests) {
+    // Find the test matrix id
+    let matrixId;
+    switch(testType) {
+      case 'Tx Power': matrixId = 'tx-power-matrix'; break;
+      case 'Tx Current Consumption': matrixId = 'tx-current-matrix'; break;
+      case 'OBW': matrixId = 'obw-matrix'; break;
+      case 'Frequency Accuracy': matrixId = 'freq-accuracy-matrix'; break;
+      default: continue;
+    }
+    
+    const matrix = document.getElementById(matrixId);
+    if (!matrix) continue;
+    
+    const table = matrix.querySelector('.matrix-table');
+    const rows = table.querySelectorAll('tbody tr');
+    
+    // For each row in this test
+    rows.forEach((row, rowIndex) => {
+      const rowLabel = row.querySelector('td:first-child').textContent.trim();
+      const cells = row.querySelectorAll('td:not(:first-child)');
       
-      const testContainer = testHeader.closest('.test-matrix');
-      if (!testContainer) return;
-      
-      const table = testContainer.querySelector('.matrix-table');
-      const rows = table.querySelectorAll('tbody tr');
-      
-      // For each row in this test
-      rows.forEach((row, rowIndex) => {
-        const rowLabel = row.querySelector('td:first-child').textContent.trim();
-        const cells = row.querySelectorAll('td:not(:first-child)');
+      // For each cell in this row
+      cells.forEach((cell, cellIndex) => {
+        const headers = table.querySelectorAll('thead th');
+        const freqLabel = headers[cellIndex + 1].textContent.trim();
         
-        // For each cell in this row
-        cells.forEach((cell, cellIndex) => {
-          const headers = table.querySelectorAll('thead th');
-          const freqLabel = headers[cellIndex + 1].textContent.trim();
-          
-          // Add a delay for each cell to simulate real-time data coming in
-          setTimeout(() => {
-            if (sampleData[testType] && sampleData[testType][rowLabel] && sampleData[testType][rowLabel][freqLabel]) {
-              const input = cell.querySelector('input');
-              if (input) {
-                input.value = sampleData[testType][rowLabel][freqLabel];
-                input.classList.add('updated');
-                
-                // Remove the updated class after animation
-                setTimeout(() => {
-                  input.classList.remove('updated');
-                }, 1000);
-              }
-            }
-            
-            // Reset button state when all data is filled
-            if (rowIndex === rows.length - 1 && cellIndex === cells.length - 1 && 
-                testType === selectedTests[selectedTests.length - 1] &&
-                bandSection === bandSections[bandSections.length - 1]) {
+        // Add a delay for each cell to simulate real-time data coming in
+        setTimeout(() => {
+          if (sampleData[testType] && sampleData[testType][rowLabel] && sampleData[testType][rowLabel][freqLabel]) {
+            const input = cell.querySelector('input');
+            if (input) {
+              input.value = sampleData[testType][rowLabel][freqLabel];
+              input.classList.add('updated');
+              
+              // Remove the updated class after animation
               setTimeout(() => {
-                document.getElementById('start-test').textContent = 'Start Test';
-                document.getElementById('start-test').disabled = false;
-                
-                // Show test completion notification
-                if (window.customModal) {
-                  window.customModal.success('Test completed successfully!', 'LoRa Test');
-                }
-              }, 500);
+                input.classList.remove('updated');
+              }, 1000);
             }
-          }, delay);
+          }
           
-          delay += 50; // Increase delay for next cell
-        });
+          // Reset button state when all data is filled
+          if (rowIndex === rows.length - 1 && cellIndex === cells.length - 1 && 
+              testType === selectedTests[selectedTests.length - 1]) {
+            setTimeout(() => {
+              document.getElementById('start-test').textContent = 'Start Test';
+              document.getElementById('start-test').disabled = false;
+              
+              // Show test completion notification
+              if (window.customModal) {
+                window.customModal.success('Test completed successfully!', 'LoRa Test');
+              }
+            }, 500);
+          }
+        }, delay);
+        
+        delay += 50; // Increase delay for next cell
       });
     });
+  }
+}
+
+// Helper function to get column headers (frequencies) from a matrix
+function getColumnHeaders(matrixId) {
+  const matrix = document.getElementById(matrixId);
+  if (!matrix) return [];
+  
+  const headers = matrix.querySelectorAll('thead th:not(:first-child)');
+  return Array.from(headers).map(header => header.textContent.trim());
+}
+
+// Helper function to get row labels (parameters) from a matrix
+function getRowLabels(matrixId) {
+  const matrix = document.getElementById(matrixId);
+  if (!matrix) return [];
+  
+  const rows = matrix.querySelectorAll('tbody tr');
+  return Array.from(rows).map(row => row.querySelector('td:first-child').textContent.trim());
+}
+
+// Function to generate sample data based on matrix structure
+function generateSampleData(matrixData) {
+  const sampleData = {};
+  
+  // TX Power data
+  sampleData['Tx Power'] = {};
+  matrixData['tx-power-matrix'].parameters.forEach(param => {
+    sampleData['Tx Power'][param] = {};
+    const powerValue = parseFloat(param) || 0;
+    
+    matrixData['tx-power-matrix'].frequencies.forEach(freq => {
+      // Generate realistic-looking test data based on the power
+      const freqNum = parseFloat(freq) || 0;
+      const baseValue = -30 + powerValue;
+      const randomOffset = (Math.random() * 0.6 - 0.3).toFixed(1);
+      sampleData['Tx Power'][param][freq] = (baseValue + parseFloat(randomOffset)).toFixed(1);
+    });
   });
+  
+  // TX Current Consumption data
+  sampleData['Tx Current Consumption'] = {};
+  matrixData['tx-current-matrix'].parameters.forEach(param => {
+    sampleData['Tx Current Consumption'][param] = {};
+    // Extract power level number from parameter
+    const powerMatch = param.match(/(\d+)/);
+    const powerValue = powerMatch ? parseInt(powerMatch[1]) : 0;
+    
+    matrixData['tx-current-matrix'].frequencies.forEach(freq => {
+      // Current increases with power level
+      const baseCurrent = 20 + (powerValue * 1.5);
+      const randomOffset = Math.floor(Math.random() * 3);
+      sampleData['Tx Current Consumption'][param][freq] = (baseCurrent + randomOffset).toString();
+    });
+  });
+  
+  // OBW data
+  sampleData['OBW'] = {};
+  matrixData['obw-matrix'].parameters.forEach(param => {
+    sampleData['OBW'][param] = {};
+    const isDR12 = param.includes('12');
+    
+    matrixData['obw-matrix'].frequencies.forEach(freq => {
+      // DR12 has wider bandwidth than DR7
+      const baseValue = isDR12 ? 500 : 125;
+      const randomOffset = Math.floor(Math.random() * 5);
+      sampleData['OBW'][param][freq] = (baseValue + randomOffset).toString();
+    });
+  });
+  
+  // Frequency Accuracy data
+  sampleData['Frequency Accuracy'] = {};
+  matrixData['freq-accuracy-matrix'].parameters.forEach(param => {
+    sampleData['Frequency Accuracy'][param] = {};
+    
+    matrixData['freq-accuracy-matrix'].frequencies.forEach(freq => {
+      if (param.includes('Measured')) {
+        // For measured frequency, generate a value close to the target frequency
+        const freqValue = parseFloat(freq);
+        const offset = (Math.random() * 0.04 - 0.02).toFixed(2);
+        sampleData['Frequency Accuracy'][param][freq] = (freqValue + parseFloat(offset)).toFixed(2);
+      } else if (param.includes('Diff')) {
+        // For diff, show the offset in ppm
+        sampleData['Frequency Accuracy'][param][freq] = '±' + (Math.random() * 0.03).toFixed(2);
+      }
+    });
+  });
+  
+  return sampleData;
 }
 
 // Function to convert cell to input field
 function convertCellToInput(cell) {
+  // Check if cell already has an input
+  if (cell.querySelector('input')) return;
+  
   // Create input element
   const input = document.createElement('input');
   input.type = 'text';
@@ -525,448 +345,213 @@ function convertCellToInput(cell) {
   cell.appendChild(input);
 }
 
-// Open the Add Band Modal
-function openAddBandModal() {
-  const modal = document.getElementById('band-modal');
+// Function to open the edit matrix modal
+function openEditMatrixModal(matrix) {
+  // Get matrix ID and type
+  const matrixId = matrix.id;
+  const matrixType = matrix.querySelector('.checkbox span').textContent.trim();
   
-  // Reset the form to ensure it's clean
-  resetBandModal();
+  // Set modal title and matrix type
+  document.querySelector('#edit-matrix-modal .modal-header h2').textContent = 'Edit ' + matrixType;
+  document.getElementById('matrix-type').value = matrixType;
   
-  // Update modal title to indicate adding
-  modal.querySelector('.modal-header h2').textContent = 'Add New Band';
-  
-  modal.classList.add('active');
-}
-
-// Close the Add Band Modal
-function closeAddBandModal() {
-  const modal = document.getElementById('band-modal');
-  if (modal) { // Check if modal exists before trying to remove class
-    modal.classList.remove('active');
-    
-    // Reset form for next use
-    resetBandModal();
-  }
-}
-
-// Reset the band modal form to default state
-function resetBandModal() {
-  // Reset band name
-  document.getElementById('band-name').value = '';
-  
-  // Reset frequencies
-  const frequencyContainer = document.getElementById('frequency-inputs');
-  frequencyContainer.innerHTML = '';
-  
-  // Add default frequency inputs
-  for (let i = 0; i < 3; i++) {
-    const inputRow = document.createElement('div');
-    inputRow.className = 'input-row';
-    inputRow.innerHTML = `
-      <input type="text" class="frequency-input" placeholder="e.g. ${915 + i*2}">
-      <button class="remove-input"><i class='bx bx-trash'></i></button>
-    `;
-    frequencyContainer.appendChild(inputRow);
-  }
-  
-  // Reset power levels
-  const powerContainer = document.getElementById('power-inputs');
-  powerContainer.innerHTML = '';
-  
-  // Add default power level inputs
-  const defaultPowers = [0, 14, 20];
-  for (let i = 0; i < defaultPowers.length; i++) {
-    const inputRow = document.createElement('div');
-    inputRow.className = 'input-row';
-    inputRow.innerHTML = `
-      <input type="text" class="power-input" placeholder="e.g. ${defaultPowers[i]}">
-      <button class="remove-input"><i class='bx bx-trash'></i></button>
-    `;
-    powerContainer.appendChild(inputRow);
-  }
-  
-  // Reset checkboxes
-  document.querySelector('input[name="test-txpower"]').checked = true;
-  document.querySelector('input[name="test-txcurrent"]').checked = true;
-  document.querySelector('input[name="test-obw"]').checked = true;
-  document.querySelector('input[name="test-freqaccuracy"]').checked = true;
-  
-  // Reset modal title
-  document.querySelector('#band-modal .modal-header h2').textContent = 'Add New Band';
-  
-  // Clear edit band id if present
-  const saveButton = document.getElementById('save-band-button');
+  // Store matrix ID in the save button's data attribute
+  const saveButton = document.getElementById('save-matrix-button');
   if (saveButton) {
-    saveButton.removeAttribute('data-edit-band-id');
+    saveButton.dataset.matrixId = matrixId;
   }
-}
-
-// Add a frequency input field
-function addFrequencyInput() {
-  const container = document.getElementById('frequency-inputs');
   
-  const inputRow = document.createElement('div');
-  inputRow.className = 'input-row';
-  
-  inputRow.innerHTML = `
-    <input type="text" class="frequency-input" placeholder="e.g. 915">
-    <button class="remove-input"><i class='bx bx-trash'></i></button>
-  `;
-  
-  container.appendChild(inputRow);
-}
-
-// Add a power level input field
-function addPowerLevelInput() {
-  const container = document.getElementById('power-inputs');
-  
-  const inputRow = document.createElement('div');
-  inputRow.className = 'input-row';
-  
-  inputRow.innerHTML = `
-    <input type="text" class="power-input" placeholder="e.g. 10">
-    <button class="remove-input"><i class='bx bx-trash'></i></button>
-  `;
-  
-  container.appendChild(inputRow);
-}
-
-// Open the edit band modal
-function openEditBandModal(bandSection) {
-  // Get current band data
-  const bandName = bandSection.querySelector('.band-header h2').textContent.trim();
-  
-  // Extract frequencies from ONLY the first table - this prevents duplicates
-  const firstTable = bandSection.querySelector('.matrix-table');
+  // Get frequencies from the table headers
   const frequencies = [];
+  const freqHeaders = matrix.querySelectorAll('thead th:not(:first-child)');
   
-  if (firstTable) {
-    const frequencyHeaders = firstTable.querySelectorAll('thead th:not(:first-child)');
-    frequencyHeaders.forEach(header => {
-      let freq = header.textContent.trim();
-      // Remove 'MHz' if present
-      freq = freq.replace('MHz', '');
-      // Only add if not already in the array
-      if (!frequencies.includes(freq)) {
-        frequencies.push(freq);
-      }
-    });
-  }
-  
-  // Get power levels from the first table if it exists
-  const powerLevels = [];
-  if (firstTable) {
-    const powerRows = firstTable.querySelectorAll('tbody tr');
-    powerRows.forEach(row => {
-      let power = row.querySelector('td:first-child').textContent.trim();
-      // Remove 'dBm' if present
-      power = power.replace('dBm', '').trim();
-      // Only add if it has a number (to filter out rows like "Measured" or "Diff.")
-      if (!isNaN(parseFloat(power)) && !powerLevels.includes(power)) {
-        powerLevels.push(power);
-      }
-    });
-  }
-  
-  // Get selected tests - using standard DOM methods
-  const matrixHeaders = bandSection.querySelectorAll('.matrix-header');
-  const selectedTests = {
-    txPower: false,
-    txCurrent: false,
-    obw: false,
-    freqAccuracy: false
-  };
-  
-  matrixHeaders.forEach(header => {
-    const spanElement = header.querySelector('span');
-    if (spanElement) {
-      const testText = spanElement.textContent.trim();
-      if (testText.includes('Tx Power')) {
-        selectedTests.txPower = true;
-      } else if (testText.includes('Tx Current')) {
-        selectedTests.txCurrent = true;
-      } else if (testText.includes('OBW')) {
-        selectedTests.obw = true;
-      } else if (testText.includes('Frequency Accuracy')) {
-        selectedTests.freqAccuracy = true;
-      }
-    }
+  freqHeaders.forEach(header => {
+    // Remove MHz if present to get just the number
+    let freq = header.textContent.trim();
+    freq = freq.replace('MHz', '');
+    frequencies.push(freq);
   });
   
-  // Populate the edit modal with the current values
-  populateEditBandModal(bandName, frequencies, powerLevels, selectedTests);
+  // Get parameters from the table rows (first cell of each row)
+  const parameters = [];
+  const paramRows = matrix.querySelectorAll('tbody tr');
+  paramRows.forEach(row => {
+    parameters.push(row.querySelector('td:first-child').textContent.trim());
+  });
   
-  // Open the modal
-  const modal = document.getElementById('band-modal');
+  // Populate the frequency inputs
+  populateInputGroup('frequency-inputs', frequencies);
   
-  // Update modal title to indicate editing
-  modal.querySelector('.modal-header h2').textContent = 'Edit Band';
+  // Populate the parameter inputs
+  populateInputGroup('parameter-inputs', parameters);
   
-  // Update save button
-  const saveButton = modal.querySelector('#save-band-button');
-  // Store reference to the band section being edited
-  saveButton.dataset.editBandId = bandSection.id;
-  
-  modal.classList.add('active');
-}
-
-// Function to populate the edit band modal with current values
-function populateEditBandModal(bandName, frequencies, powerLevels, selectedTests) {
-  // Set band name
-  document.getElementById('band-name').value = bandName;
-  
-  // COMPLETELY clear existing frequency inputs (remove all inputs first)
-  const frequencyContainer = document.getElementById('frequency-inputs');
-  frequencyContainer.innerHTML = '';
-  
-  // Add new frequency inputs for each frequency
-  if (frequencies.length > 0) {
-    frequencies.forEach(freq => {
-      // Create a new input row
-      const inputRow = document.createElement('div');
-      inputRow.className = 'input-row';
-      
-      inputRow.innerHTML = `
-        <input type="text" class="frequency-input" placeholder="e.g. 915" value="${freq}">
-        <button class="remove-input"><i class='bx bx-trash'></i></button>
-      `;
-      
-      frequencyContainer.appendChild(inputRow);
-    });
-  } else {
-    // Add at least one empty frequency input if none exist
-    const inputRow = document.createElement('div');
-    inputRow.className = 'input-row';
-    
-    inputRow.innerHTML = `
-      <input type="text" class="frequency-input" placeholder="e.g. 915">
-      <button class="remove-input"><i class='bx bx-trash'></i></button>
-    `;
-    
-    frequencyContainer.appendChild(inputRow);
-  }
-  
-  // COMPLETELY clear existing power inputs (remove all inputs first)
-  const powerContainer = document.getElementById('power-inputs');
-  powerContainer.innerHTML = '';
-  
-  // Add new power level inputs for each power level
-  if (powerLevels.length > 0) {
-    powerLevels.forEach(power => {
-      // Create a new input row
-      const inputRow = document.createElement('div');
-      inputRow.className = 'input-row';
-      
-      inputRow.innerHTML = `
-        <input type="text" class="power-input" placeholder="e.g. 10" value="${power}">
-        <button class="remove-input"><i class='bx bx-trash'></i></button>
-      `;
-      
-      powerContainer.appendChild(inputRow);
-    });
-  } else {
-    // Add at least one empty power input if none exist
-    const inputRow = document.createElement('div');
-    inputRow.className = 'input-row';
-    
-    inputRow.innerHTML = `
-      <input type="text" class="power-input" placeholder="e.g. 10">
-      <button class="remove-input"><i class='bx bx-trash'></i></button>
-    `;
-    
-    powerContainer.appendChild(inputRow);
-  }
-  // Set checkboxes for selected tests
-  document.querySelector('input[name="test-txpower"]').checked = selectedTests.txPower;
-  document.querySelector('input[name="test-txcurrent"]').checked = selectedTests.txCurrent;
-  document.querySelector('input[name="test-obw"]').checked = selectedTests.obw;
-  document.querySelector('input[name="test-freqaccuracy"]').checked = selectedTests.freqAccuracy;
-}
-
-// Function to confirm band deletion
-function confirmDeleteBand(bandSection, bandName) {
-  // If custom modal is available, use it
-  if (window.customModal) {
-    window.customModal.confirm(
-      `Are you sure you want to delete ${bandName}? This action cannot be undone.`,
-      'Delete Band',
-      'warning'
-    ).then(confirmed => {
-      if (confirmed) {
-        deleteBand(bandSection);
-      }
-    });
-  } else {
-    // Fallback to standard confirm
-    const confirmed = confirm(`Are you sure you want to delete ${bandName}? This action cannot be undone.`);
-    if (confirmed) {
-      deleteBand(bandSection);
-    }
+  // Show the modal
+  const modal = document.getElementById('edit-matrix-modal');
+  if (modal) {
+    modal.classList.add('active');
   }
 }
 
-// Function to delete the band
-function deleteBand(bandSection) {
-  // Animate the removal
-  bandSection.style.transition = 'opacity 0.3s, max-height 0.5s';
-  bandSection.style.opacity = '0';
-  bandSection.style.maxHeight = '0';
-  bandSection.style.overflow = 'hidden';
+// Function to populate an input group with values
+function populateInputGroup(containerId, values) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
   
-  // Remove from DOM after animation completes
-  setTimeout(() => {
-    bandSection.remove();
-    
-    // Show confirmation if no bands left - use safer method call
-    const remainingBands = document.querySelectorAll('.band-section');
-    if (remainingBands.length === 0 && window.customModal) {
-      // Check which method is available and use it
-      if (typeof window.customModal.info === 'function') {
-        window.customModal.info('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
-      } else if (typeof window.customModal.success === 'function') {
-        window.customModal.success('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
-      } else if (typeof window.customModal.alert === 'function') {
-        window.customModal.alert('All bands have been removed. You can add new bands using the "Add Band" button.', 'Band Management');
-      }
-      // If none of the above methods exist, just don't show any notification
-    }
-  }, 500);
+  // Clear existing inputs
+  container.innerHTML = '';
   
-  // Show confirmation
-  if (window.customModal) {
-    if (typeof window.customModal.success === 'function') {
-      window.customModal.success('Band deleted successfully', 'Band Management');
-    } else if (typeof window.customModal.alert === 'function') {
-      window.customModal.alert('Band deleted successfully', 'Band Management');
-    }
-    // If neither method exists, don't show any notification
+  // Add an input row for each value
+  values.forEach(value => {
+    addInputRow(container, value);
+  });
+}
+
+// Function to add a frequency input row
+function addFrequencyInput() {
+  const container = document.getElementById('frequency-inputs');
+  if (container) {
+    addInputRow(container, '');
   }
 }
 
-// Save the band configuration
-function saveBand() {
-  // Get band name
-  const bandName = document.getElementById('band-name').value.trim();
+// Function to add a parameter input row
+function addParameterInput() {
+  const container = document.getElementById('parameter-inputs');
+  if (container) {
+    addInputRow(container, '');
+  }
+}
+
+// Generic function to add an input row
+function addInputRow(container, value) {
+  const inputRow = document.createElement('div');
+  inputRow.className = 'input-row';
   
-  // Validate band name
-  if (!bandName) {
+  inputRow.innerHTML = `
+    <input type="text" class="custom-input" value="${value}">
+    <button class="remove-input icon-button" title="Remove">
+      <i class='bx bx-trash'></i>
+    </button>
+  `;
+  
+  container.appendChild(inputRow);
+}
+
+// Function to close the edit matrix modal
+function closeEditMatrixModal() {
+  const modal = document.getElementById('edit-matrix-modal');
+  if (modal) {
+    modal.classList.remove('active');
+  }
+}
+
+// Function to save changes to the matrix
+function saveMatrixChanges() {
+  // Get the matrix ID from the save button
+  const saveButton = document.getElementById('save-matrix-button');
+  if (!saveButton) return;
+  
+  const matrixId = saveButton.dataset.matrixId;
+  if (!matrixId) return;
+  
+  const matrix = document.getElementById(matrixId);
+  if (!matrix) return;
+  
+  // Get new frequencies
+  const frequencyInputs = document.querySelectorAll('#frequency-inputs .custom-input');
+  const frequencies = Array.from(frequencyInputs).map(input => input.value.trim());
+  
+  // Validate frequencies
+  if (frequencies.some(freq => !freq)) {
     if (window.customModal) {
-      window.customModal.error('Please enter a band name', 'Validation Error');
+      window.customModal.error('All frequency fields must be filled', 'Validation Error');
     } else {
-      alert('Please enter a band name');
+      alert('All frequency fields must be filled');
     }
     return;
   }
   
-  // Get frequencies
-  const frequencyInputs = document.querySelectorAll('#frequency-inputs .frequency-input');
-  const frequencies = [];
+  // Get new parameters
+  const parameterInputs = document.querySelectorAll('#parameter-inputs .custom-input');
+  const parameters = Array.from(parameterInputs).map(input => input.value.trim());
   
-  for (const input of frequencyInputs) {
-    const value = input.value.trim();
-    if (!value) {
-      if (window.customModal) {
-        window.customModal.error('Please fill in all frequency fields', 'Validation Error');
-      } else {
-        alert('Please fill in all frequency fields');
-      }
-      return;
-    }
-    frequencies.push(value);
-  }
-  
-  // Get power levels
-  const powerInputs = document.querySelectorAll('#power-inputs .power-input');
-  const powerLevels = [];
-  
-  for (const input of powerInputs) {
-    const value = input.value.trim();
-    if (!value) {
-      if (window.customModal) {
-        window.customModal.error('Please fill in all power level fields', 'Validation Error');
-      } else {
-        alert('Please fill in all power level fields');
-      }
-      return;
-    }
-    powerLevels.push(value);
-  }
-  
-  // Get selected tests
-  const selectedTests = {
-    txPower: document.querySelector('input[name="test-txpower"]').checked,
-    txCurrent: document.querySelector('input[name="test-txcurrent"]').checked,
-    obw: document.querySelector('input[name="test-obw"]').checked,
-    freqAccuracy: document.querySelector('input[name="test-freqaccuracy"]').checked
-  };
-  
-  // Check if at least one test is selected
-  if (!selectedTests.txPower && !selectedTests.txCurrent && 
-      !selectedTests.obw && !selectedTests.freqAccuracy) {
+  // Validate parameters
+  if (parameters.some(param => !param)) {
     if (window.customModal) {
-      window.customModal.error('Please select at least one test', 'Validation Error');
+      window.customModal.error('All parameter fields must be filled', 'Validation Error');
     } else {
-      alert('Please select at least one test');
+      alert('All parameter fields must be filled');
     }
     return;
   }
   
-  const saveButton = document.getElementById('save-band-button');
-  const editBandId = saveButton.dataset.editBandId;
-  
-  if (editBandId) {
-    // We're editing an existing band
-    const bandSection = document.getElementById(editBandId);
-    
-    if (bandSection) {
-      // Remove the existing band section
-      bandSection.remove();
-      
-      // Create a new one with the updated data
-      createBandSection(bandName, frequencies, powerLevels, selectedTests);
-      
-      // Show confirmation message
-      if (window.customModal) {
-        window.customModal.success(`Band ${bandName} has been updated successfully`, 'Success');
-      } else {
-        alert(`Band ${bandName} has been updated successfully`);
-      }
-    }
-    
-    // Clear the edit data attribute
-    saveButton.removeAttribute('data-edit-band-id');
-    
-    // Reset modal title
-    document.querySelector('#band-modal .modal-header h2').textContent = 'Add New Band';
-  } else {
-    // We're adding a new band
-    createBandSection(bandName, frequencies, powerLevels, selectedTests);
-    
-    // Show confirmation message
-    if (window.customModal) {
-      window.customModal.success(`Band ${bandName} has been added successfully`, 'Success');
-    } else {
-      alert(`Band ${bandName} has been added successfully`);
-    }
-  }
+  // Rebuild the table with new frequencies and parameters
+  rebuildMatrix(matrix, frequencies, parameters);
   
   // Close the modal
-  closeAddBandModal();
-}value.trim();
-    if (!value) {
-      if (window.customModal) {
-        window.customModal.error('Please fill in all frequency fields', 'Validation Error');
-      } else {
-        alert('Please fill in all frequency fields');
+  closeEditMatrixModal();
+  
+  // Show success message
+  if (window.customModal) {
+    window.customModal.success('Matrix updated successfully!', 'Success');
+  } else {
+    alert('Matrix updated successfully!');
+  }
+}
+
+// Function to rebuild a matrix with new frequencies and parameters
+function rebuildMatrix(matrix, frequencies, parameters) {
+  // Get the table
+  const table = matrix.querySelector('.matrix-table');
+  if (!table) return;
+  
+  // Determine what type of matrix we're dealing with
+  const matrixType = matrix.querySelector('.checkbox span').textContent.trim();
+  
+  // Special formatting for parameters based on matrix type
+  const formattedParameters = parameters.map(param => {
+    if (matrixType === 'Tx Power' || matrixType === 'Tx Current Consumption') {
+      // If parameter is a number, add 'dBm' to it
+      if (!isNaN(parseFloat(param)) && !param.includes('dBm')) {
+        return param + ' dBm';
       }
-      return;
     }
-    frequencies.push(value);
+    return param;
+  });
+  
+  // Special formatting for frequencies
+  const formattedFrequencies = frequencies.map(freq => {
+    // Add 'MHz' to frequency if not already present
+    if (!freq.includes('MHz')) {
+      return freq + 'MHz';
+    }
+    return freq;
+  });
+  
+  // Rebuild table header
+  const thead = table.querySelector('thead');
+  if (thead) {
+    thead.innerHTML = '<tr><th></th>' + formattedFrequencies.map(freq => `<th>${freq}</th>`).join('') + '</tr>';
   }
   
-  // Get power levels
-  const powerInputs = document.querySelectorAll('#power-inputs .power-input');
-  const powerLevels = [];
+  // Rebuild table body
+  const tbody = table.querySelector('tbody');
+  if (tbody) {
+    tbody.innerHTML = '';
+    
+    formattedParameters.forEach(param => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${param}</td>` + formattedFrequencies.map(() => '<td></td>').join('');
+      tbody.appendChild(row);
+    });
+  }
   
-  for (const input of powerInputs) {
-    const value = input.
+  // Reinitialize input cells
+  const tableCells = table.querySelectorAll('td:not(:first-child)');
+  tableCells.forEach(cell => {
+    convertCellToInput(cell);
+  });
+}
+
+// Make the initialization function available globally for renderer.js
+window.initLoraPage = initLoraPage;

@@ -1,6 +1,4 @@
-.matrix-table th:first-child {
-  text-align: left;
-}/* LoRa page specific styles */
+/* LoRa page specific styles */
 .page-container {
   padding: 10px;
 }
@@ -81,6 +79,37 @@ h1 {
   border-bottom: none;
 }
 
+.matrix-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.matrix-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  color: var(--color-text-light);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.icon-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: var(--color-accent);
+}
+
 .checkbox {
   display: flex;
   align-items: center;
@@ -94,6 +123,11 @@ h1 {
 .table-container {
   width: 100%;
   overflow-x: auto;
+}
+
+.table-container.disabled {
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .matrix-table {
@@ -130,6 +164,10 @@ h1 {
   font-weight: 500;
   text-align: center;
   border-bottom: none;
+}
+
+.matrix-table th:first-child {
+  text-align: left;
 }
 
 .matrix-table td:first-child {
@@ -199,6 +237,45 @@ input[type="checkbox"]:checked::after {
   border: solid var(--color-white);
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+/* Modal styles for editing matrices */
+.custom-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.input-group {
+  margin-bottom: 8px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.add-input-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background-color: transparent;
+  border: 1px solid var(--color-border-light);
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.add-input-button:hover {
+  background-color: var(--color-bg-secondary);
 }
 
 .disabled {
