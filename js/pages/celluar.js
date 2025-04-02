@@ -73,6 +73,14 @@ function setupEventListeners() {
   if (saveBandButton) {
     saveBandButton.addEventListener('click', saveBand);
   }
+
+  // Browse directory button
+  const browseButton = document.getElementById('browse-button');
+  if (browseButton) {
+    browseButton.addEventListener('click', () => {
+      browseDirectory('directory-input');
+    });
+  }
 }
 
 // Setup event delegation for dynamically created elements
@@ -279,7 +287,7 @@ function resetBandModal() {
   if (txCurrentCheckbox) txCurrentCheckbox.checked = true;
   
   const obwCheckbox = document.querySelector('input[name="test-obw"]');
-  if (obwCheckbox) obwCheckbox.checked = true;
+  if (obwCheckbox) txCurrentCheckbox.checked = true;
   
   const freqAccuracyCheckbox = document.querySelector('input[name="test-freqaccuracy"]');
   if (freqAccuracyCheckbox) freqAccuracyCheckbox.checked = true;
@@ -304,7 +312,6 @@ function resetBandModal() {
   }
 }
 
-// Add a frequency input field
 // Add a frequency input field
 function addFrequencyInput() {
   console.log('addFrequencyInput function called');
@@ -991,6 +998,26 @@ function initializeNewTableCells(container) {
   // Verify all inputs were created successfully
   const createdInputs = container.querySelectorAll('.cell-input');
   console.log(`Initialized table check: Expected ${tableCells.length} inputs, created ${createdInputs.length} inputs`);
+}
+
+// Function to browse directory and insert the path into the input field
+function browseDirectory(inputId) {
+  const { dialog } = require('electron').remote; // Ensure Electron's dialog module is available
+  dialog.showOpenDialog({
+    properties: ['openDirectory']
+  }).then(result => {
+    if (!result.canceled && result.filePaths.length > 0) {
+      const inputField = document.getElementById(inputId);
+      if (inputField) {
+        inputField.value = result.filePaths[0];
+        console.log(`Directory selected: ${result.filePaths[0]}`);
+      } else {
+        console.error(`Input field with ID "${inputId}" not found.`);
+      }
+    }
+  }).catch(err => {
+    console.error('Error selecting directory:', err);
+  });
 }
 
 // Helper function to find an element containing specific text

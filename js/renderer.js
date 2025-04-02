@@ -147,46 +147,95 @@ function initConfigurationPage() {
   const checkSpectrumButton = document.getElementById('check-spectrum');
   const checkPowerButton = document.getElementById('check-power');
   const browseDirectoryButton = document.getElementById('browse-directory');
+  //Imorting the concection check utility
+  const connectionCheck = require('./js/utils/connection_check.js');
   
   if (checkSpectrumButton) {
-    checkSpectrumButton.addEventListener('click', () => {
+    checkSpectrumButton.addEventListener('click', async() => {
       const address = document.getElementById('spectrum-analyzer').value;
       if (!address) {
-        // Replace alert with custom modal
         window.customModal.error('Please enter a valid IP address', 'Input Error');
         return;
       }
+      checkSpectrumButton.disabled = true;
+      checkSpectrumButton.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
       
-      // Simulate connection check
-      setTimeout(() => {
-        // Replace alert with custom modal
-        const spectrumAnalyzerAddress = document.getElementById('spectrum-analyzer').value;
-        window.customModal.success(`Connection successful at ${spectrumAnalyzerAddress}!`, 'Spectrum Analyzer');
-      }, 500);
+      try {
+        const result = await connectionCheck.checkInstrumentConnection(
+          address, 
+          'Spectrum Analyzer'
+        );
+        
+        if (result.success) {
+          window.customModal.success(
+            `Connection successful at ${address}!` + 
+            (result.responseTime ? ` Response time: ${result.responseTime}ms` : ''),
+            'Spectrum Analyzer'
+          );
+        } else {
+          window.customModal.error(
+            `Failed to connect to ${address}. Please check the IP address and ensure the device is powered on.`,
+            'Connection Error'
+          );
+        }
+      } catch (error) {
+        window.customModal.error(
+          `Error checking connection: ${error.message}`,
+          'Connection Error'
+        );
+      } finally {
+        // Reset button state
+        checkSpectrumButton.disabled = false;
+        checkSpectrumButton.innerHTML = 'Check';
+      }
     });
   }
   
   if (checkPowerButton) {
-    checkPowerButton.addEventListener('click', () => {
+    checkPowerButton.addEventListener('click', async () => {
       const address = document.getElementById('power-analyzer').value;
       if (!address) {
-        // Replace alert with custom modal
         window.customModal.error('Please enter a valid IP address', 'Input Error');
         return;
       }
+      checkPowerButton.disabled = true;
+      checkPowerButton.innerHTML = '<i class="bx bx-loader-alt bx-spin"></i>';
       
-      // Simulate connection check
-      setTimeout(() => {
-        // Replace alert with custom modal
-        const powerAnalyzerAddress = document.getElementById('power-analyzer').value;
-        window.customModal.success(`Connection successful at ${powerAnalyzerAddress}!`, 'Power Analyzer');
-      }, 500);
+      try {
+        const result = await connectionCheck.checkInstrumentConnection(
+          address, 
+          'Power Analyzer'
+        );
+        
+        if (result.success) {
+          window.customModal.success(
+            `Connection successful at ${address}!` + 
+            (result.responseTime ? ` Response time: ${result.responseTime}ms` : ''),
+            'Power Analyzer'
+          );
+        } else {
+          window.customModal.error(
+            `Failed to connect to ${address}. Please check the IP address and ensure the device is powered on.`,
+            'Connection Error'
+          );
+        }
+      } catch (error) {
+        window.customModal.error(
+          `Error checking connection: ${error.message}`,
+          'Connection Error'
+        );
+      } finally {
+        // Reset button state
+        checkPowerButton.disabled = false;
+        checkPowerButton.innerHTML = 'Check';
+      }
     });
+      // Simulate connection check
+      
   }
   
   if (browseDirectoryButton) {
     browseDirectoryButton.addEventListener('click', () => {
-      // For now, just set a sample directory
       document.getElementById('report-directory').value = 'C:/Users/Selected/Path';
       // Add notification with custom modal
       window.customModal.info('Directory path updated', 'File System');
